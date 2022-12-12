@@ -27,6 +27,11 @@ request fill_request(request my_request){
 
 bool is_req_well_formed(request my_request, Header &response_header)
 {
+    /* -------------------- Todo list --------------------   
+            * 501 : Not Implemented
+            * 413 : Request Entity Too Large
+    */
+
     size_t check_allowded =  my_request.uri.find_first_not_of("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~:/?#[]@!$&'()*+,;=%");
     
     if(check_allowded != std::string::npos)

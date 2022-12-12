@@ -7,7 +7,7 @@ int main(){
 
     if(!is_req_well_formed(my_request,response_header))
     {
-        std::cout << "GET" << std::endl;
+        
     }
     else{
         std::cout << response_header.status.first << " : " << response_header.status.second << std::endl;
