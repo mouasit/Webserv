@@ -2,6 +2,7 @@
 #define RESPONSE_HPP
 
 #include <iostream>
+#include <unistd.h>
 
 typedef struct request{
 
@@ -11,6 +12,13 @@ typedef struct request{
     std::string uri;
 
 } request;
+
+
+typedef struct config{
+
+    std::string root;
+
+} config;
 
 
 typedef struct Header{
@@ -23,6 +31,14 @@ request fill_request(request my_request){
     my_request.content_length = 5;
     my_request.uri = "/index.html";
     return my_request;
+}
+
+config fill_config()
+{
+    config config_file;
+
+    config_file.root = ".";
+    return config_file;
 }
 
 bool is_req_well_formed(request my_request, Header &response_header)
@@ -47,5 +63,17 @@ bool is_req_well_formed(request my_request, Header &response_header)
         return true;
     }
     return false;   
+}
+
+bool check_location(request my_request,std::string root,Header &response_header)
+{
+    int path = access((root + my_request.uri).c_str() , F_OK);
+    if (path == -1)
+    {
+        response_header.status.first = 404;
+        response_header.status.second = "Not Found";
+        return true;
+    }
+    return false;
 }
 #endif
