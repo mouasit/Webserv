@@ -11,7 +11,10 @@ int main(){
     {
         if(!check_location(my_request, config_file.root, response_header))
         {
-            std::cout << "GET" << std::endl;
+            if(is_method_allowded(my_request.method))
+            {
+                std::cout << "GET" << std::endl;
+            }
         }
     }
     std::cout << response_header.status.first << " : " << response_header.status.second << std::endl;

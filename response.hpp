@@ -67,6 +67,10 @@ bool is_req_well_formed(request my_request, Header &response_header)
 
 bool check_location(request my_request,std::string root,Header &response_header)
 {
+        /* -------------------- Todo list --------------------   
+            * 301 : Moved Permanently
+    */
+
     int path = access((root + my_request.uri).c_str() , F_OK);
     if (path == -1)
     {
@@ -75,5 +79,12 @@ bool check_location(request my_request,std::string root,Header &response_header)
         return true;
     }
     return false;
+}
+
+bool is_method_allowded(std::string method)
+{
+    if(method != "GET" && method != "POST" && method != "DELETE" && method != "PUT")
+        return false;
+    return true;
 }
 #endif
