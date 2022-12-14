@@ -12,7 +12,10 @@ int main(){
     {
         if(is_directory((config_file.root + my_request.uri).c_str()))
         {
+            if(is_slash_in_end(my_request.uri,response_header))
+            {
 
+            }
         }
         else{
 

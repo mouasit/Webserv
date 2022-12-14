@@ -39,11 +39,26 @@ config fill_config()
 
 bool is_directory(const char *uri)
 {
-
     struct stat buff;
+    
     lstat(uri,&buff);
     if(S_ISDIR(buff.st_mode))
         return true;
+    return false;
+}
+
+bool is_slash_in_end(std::string uri, Header &response_header)
+{
+    /* 
+        ------------- TODO -------------
+            
+            - make a 301 redirection to request uri with '/' addeed at the end.
+     */
+
+    if(uri[uri.length() - 1] == '/')
+        return true;
+    response_header.status.first = 301;
+    response_header.status.second = "Moved Permanently";
     return false;
 }
 
