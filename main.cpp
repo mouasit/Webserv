@@ -7,14 +7,15 @@ int main(){
 
     my_request = fill_request(my_request);
     config_file = fill_config();
-    if(!is_req_well_formed(my_request,response_header))
+
+    if(my_request.method == "GET")
     {
-        if(!check_location(my_request, config_file.root, response_header))
+        if(is_directory((config_file.root + my_request.uri).c_str()))
         {
-            if(is_method_allowded(my_request.method))
-            {
-                std::cout << "GET" << std::endl;
-            }
+
+        }
+        else{
+
         }
     }
     std::cout << response_header.status.first << " : " << response_header.status.second << std::endl;
