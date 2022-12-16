@@ -2,6 +2,7 @@
 #define RESPONSE_HELPERS_HPP
 
 #include <iostream>
+#include <fstream>
 #include <sys/stat.h>
 #include <map>
 
@@ -181,8 +182,26 @@ std::string get_content_type(std::string path_file, std::map<std::string,std::st
     return "application/octet-stream";
 }
 
+std::string get_body(std::string path_file)
+{
+    std::ifstream file(path_file);
+    std::string body;
+
+    if(file.is_open())
+    {
+        while (file)
+            body += file.get();
+    }
+    body[body.length() - 1] = '\0';
+    return body;
+}
+
 void set_response(int code, response_data &response_data, code_status status)
 {
+    /* body */
+
+    response_data.body = get_body(status.error_pages[code]);
+
     /* start line */
 
     response_data.start_line.host = "HTTP/1.1";
@@ -191,8 +210,8 @@ void set_response(int code, response_data &response_data, code_status status)
     /* headers */
 
     response_data.headers.content_type = get_content_type(status.error_pages[code],status.content_types);
+    response_data.headers.content_length = std::to_string(response_data.body.length());
 
-    /* body */
 }
 
 bool is_directory(const char *uri)

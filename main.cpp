@@ -18,5 +18,5 @@ int main(){
     {
         
     }
-    std::cout << response_data.start_line.status << std::endl;
+    //std::cout << response_data.start_line.status << std::endl;
 }
