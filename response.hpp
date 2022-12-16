@@ -11,8 +11,8 @@
 
 void    response_get_method(info data, response_data &response_data)
 {
-    std::map<int,std::string> status;
-
+    code_status status;
+    
     status = fill_status(status);
     if(is_directory((data.config_file.root + data.request.uri).c_str()))
         {

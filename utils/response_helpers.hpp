@@ -23,19 +23,39 @@ typedef struct response_data{
     std::string body;
 }response_data;
 
-std::map<int,std::string>   fill_status(std::map<int,std::string> status)
+typedef struct code_status{
+    std::map<int,std::string> message_status;
+    std::map<int,std::string> error_pages;
+}code_status;
+
+std::map<int,std::string> fill_message_status(std::map<int,std::string> message_status)
 {
-    status.insert(std::make_pair(200,"OK"));
-    status.insert(std::make_pair(404,"Not Found"));
-    status.insert(std::make_pair(301,"Moved Permanently"));
-    status.insert(std::make_pair(403,"Forbidden"));
+    message_status.insert(std::make_pair(200,"OK"));
+    message_status.insert(std::make_pair(404,"Not Found"));
+    message_status.insert(std::make_pair(301,"Moved Permanently"));
+    message_status.insert(std::make_pair(403,"Forbidden"));
+    return message_status;
+}
+
+std::map<int, std::string> fill_error_pages(std::map<int,std::string> error_pages)
+{
+    error_pages.insert(std::make_pair(404,"./error_pages/404.html"));
+    error_pages.insert(std::make_pair(301,"./error_pages/301.html"));
+    error_pages.insert(std::make_pair(403,"./error_pages/403.html"));
+    return error_pages;
+}
+
+code_status  fill_status(code_status status)
+{
+    status.message_status = fill_message_status(status.message_status);
+    status.error_pages = fill_error_pages(status.error_pages);
     return status;
 }
 
-void set_response(int code, response_data &response_data, std::map<int,std::string> status)
+void set_response(int code, response_data &response_data, code_status status)
 {
     response_data.start_line.host = "HTTP/1.1";
-    response_data.start_line.status = std::to_string(code) + " " + status[code];
+    response_data.start_line.status = std::to_string(code) + " " + status.message_status[code];
 }
 
 bool is_directory(const char *uri)
@@ -48,7 +68,7 @@ bool is_directory(const char *uri)
     return false;
 }
 
-bool is_slash_in_end(std::string uri, response_data &response_data,std::map<int,std::string> status)
+bool is_slash_in_end(std::string uri, response_data &response_data,code_status status)
 {
     /* 
         ------------- TODO -------------
@@ -80,7 +100,7 @@ bool location_has_cgi()
     return false;
 }
 
-bool is_auto_index(std::string autoIndex, response_data &response_data, std::map<int,std::string> status)
+bool is_auto_index(std::string autoIndex, response_data &response_data, code_status status)
 {
     if(autoIndex == "on")
         return true;
