@@ -56,6 +56,8 @@ void set_response(int code, response_data &response_data, code_status status)
 {
     response_data.start_line.host = "HTTP/1.1";
     response_data.start_line.status = std::to_string(code) + " " + status.message_status[code];
+
+    std::cout << status.error_pages[code] << std::endl;
 }
 
 bool is_directory(const char *uri)
