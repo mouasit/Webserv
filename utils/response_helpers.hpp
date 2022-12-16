@@ -26,6 +26,7 @@ typedef struct response_data{
 typedef struct code_status{
     std::map<int,std::string> message_status;
     std::map<int,std::string> error_pages;
+    std::map<std::string,std::string> content_types;
 }code_status;
 
 std::map<int,std::string> fill_message_status(std::map<int,std::string> message_status)
@@ -45,19 +46,153 @@ std::map<int, std::string> fill_error_pages(std::map<int,std::string> error_page
     return error_pages;
 }
 
+std::map<std::string,std::string> fill_content_types(std::map<std::string,std::string> content_types)
+{
+    content_types["html"] = "text/html";
+	content_types["htm"] = "text/html";
+	content_types["shtml"] = "text/html";
+	content_types["css"] = "text/css";
+	content_types["xml"] = "text/css";
+	content_types["gif"]= "image/gif";
+	content_types["jpeg"]= "image/jpeg";
+	content_types["jpg"]= "image/jpeg";
+	content_types["png"]= "image/png";
+	content_types["js"]= "application/javascript";
+	content_types["atom"]= "application/atom+xml";
+	content_types["rss"]= "application/rss+xml";
+	
+	content_types["mml"]= "text/mathml";
+	content_types["txt"]= "text/plain";
+	content_types["jad"]= "text/vnd.sun.j2me.app-descriptor";
+	content_types["wml"]= "text/vnd.wap.wml";
+	content_types["htc"]= "text/x-component";
+	
+	content_types["png"]= "image/png";
+	content_types["tif"]= "image/tiff";
+	content_types["tiff"]= "image/tiff";
+	content_types["wbmp"]= "image/vnd.wap.wbmp";
+	content_types["ico"]= "image/x-icon";
+	content_types["jng"]= "image/x-jng";
+	content_types["bmp"]= "image/x-ms-bmp";
+	content_types["svg"]= "image/svg+xml";
+	content_types["svgz"]= "image/svg+xml";
+	content_types["webp"]= "image/webp";
+
+	content_types["woff"] = "application/font-woff";
+	content_types["jar"] = "application/java-archive";
+	content_types["war"] = "application/java-archive";
+	content_types["ear"] = "application/java-archive";
+	content_types["json"] = "application/json";
+	content_types["hqx"] = "application/mac-binhex40";
+	content_types["doc"] = "application/msword";
+	content_types["pdf"] = "application/pdf";
+	content_types["ps"] = "application/postscript";
+	content_types["eps"] = "application/postscript";
+	content_types["ai"] = "application/postscript";
+	content_types["rtf"] = "application/rtf";
+	content_types["m3u8"] = "application/vnd.apple.mpegurl";
+	content_types["xls"] = "application/vnd.ms-excel";
+	content_types["eot"] = "application/vnd.ms-fontobject";
+	content_types["ppt"] = "application/vnd.ms-powerpoint";
+	content_types["wmlc"] = "application/vnd.wap.wmlc";
+	content_types["kml"] = "application/vnd.google-earth.kml+xml";
+	content_types["kmz"] = "application/vnd.google-earth.kmz";
+	content_types["7z"] = "application/x-7z-compressed";
+	content_types["cco"] = "application/x-cocoa";
+	content_types["jardiff"] = "application/x-java-archive-diff";
+	content_types["jnlp"] = "application/x-java-jnlp-file";
+	content_types["run"] = "application/x-makeself";
+	content_types["pl"] = "application/x-perl";
+	content_types["pm"] = "application/x-perl";
+	content_types["prc"] = "application/x-pilot";
+	content_types["pdb"] = "application/x-pilot";
+	content_types["rar"] = "application/x-rar-compressed";
+	content_types["rpm"] = "application/x-redhat-package-manager";
+	content_types["sea"] = "application/x-sea";
+	content_types["swf"] = "application/x-shockwave-flash";
+	content_types["sit"] = "application/x-stuffit";
+	content_types["tcl"] = "application/x-tcl";
+	content_types["tk"] = "application/x-tcl";
+	content_types["der"] = "application/x-x509-ca-cert";
+	content_types["pem"] = "application/x-x509-ca-cert";
+	content_types["cert"] = "application/x-x509-ca-cert";
+	content_types["xpi"] = "application/x-xpinstall";
+	content_types["xhtml"] = "application/xhtml+xml";
+	content_types["xspf"] = "application/xspf+xml";
+	content_types["zip"] = "application/zip";
+
+	content_types["bin"] = "application/octet-stream";
+	content_types["exe"] = "application/octet-stream";
+	content_types["dll"] = "application/octet-stream";
+	content_types["deb"] = "application/octet-stream";
+	content_types["dmg"] = "application/octet-stream";
+	content_types["iso"] = "application/octet-stream";
+	content_types["img"] = "application/octet-stream";
+	content_types["msi"] = "application/octet-stream";
+	content_types["msp"] = "application/octet-stream";
+	content_types["msm"] = "application/octet-stream";
+
+	content_types["docx"] = "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+	content_types["xlsx"] = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+	content_types["pptx"] = "application/vnd.openxmlformats-officedocument.presentationml.presentation";
+
+	content_types["mid"] = "audio/midi";
+	content_types["midi"] = "audio/midi";
+	content_types["kar"] = "audio/midi";
+	content_types["mp3"] = "audio/mpeg";
+	content_types["ogg"] = "audio/ogg";
+	content_types["m4a"] = "audio/x-m4a";
+	content_types["ra"] = "audio/x-realaudio";
+
+	content_types["3gpp"] = "video/3gpp";
+	content_types["3gp"] = "video/3gpp";
+	content_types["ts"] = "video/mp2t";
+	content_types["mp4"] = "video/mp4";
+	content_types["mpeg"] = "video/mpeg";
+	content_types["mpg"] = "video/mpeg";
+	content_types["mov"] = "video/quicktime";
+	content_types["webm"] = "video/webm";
+	content_types["flv"] = "video/x-flv";
+	content_types["m4v"] = "video/x-m4v";
+	content_types["mng"] = "video/x-mng";
+	content_types["asx"] = "video/x-ms-asf";
+	content_types["asf"] = "video/x-ms-asf";
+	content_types["wmv"] = "video/x-ms-wmv";
+	content_types["avi"] = "video/x-msvideo";
+
+    return content_types;
+}
+
 code_status  fill_status(code_status status)
 {
     status.message_status = fill_message_status(status.message_status);
     status.error_pages = fill_error_pages(status.error_pages);
+    status.content_types = fill_content_types(status.content_types);
     return status;
+}
+
+std::string get_content_type(std::string path_file, std::map<std::string,std::string> content_types)
+{
+    std::string extention;
+
+    extention = path_file.substr(path_file.find_last_of('.') + 1);
+    if(content_types.count(extention))
+        return(content_types[extention]);
+    return "application/octet-stream";
 }
 
 void set_response(int code, response_data &response_data, code_status status)
 {
+    /* start line */
+
     response_data.start_line.host = "HTTP/1.1";
     response_data.start_line.status = std::to_string(code) + " " + status.message_status[code];
 
-    std::cout << status.error_pages[code] << std::endl;
+    /* headers */
+
+    response_data.headers.content_type = get_content_type(status.error_pages[code],status.content_types);
+
+    /* body */
 }
 
 bool is_directory(const char *uri)
