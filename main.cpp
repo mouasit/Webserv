@@ -2,13 +2,13 @@
 
 int main(){
     info data;
-    Header response_header;
+    response_data response_data;
 
     data = fill_data(data);
 
     if(data.request.method == "GET")
     {
-
+        response_get_method(data,response_data);
     }
     if(data.request.method == "POST")
     {
@@ -18,5 +18,5 @@ int main(){
     {
         
     }
-    std::cout << response_header.status << std::endl;
+    std::cout << response_data.start_line.status << std::endl;
 }
