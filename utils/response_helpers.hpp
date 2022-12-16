@@ -198,6 +198,8 @@ std::string get_body(std::string path_file)
 
 void set_response(int code, response_data &response_data, code_status status)
 {
+	std::string response;
+
     /* body */
 
     response_data.body = get_body(status.error_pages[code]);
@@ -209,8 +211,13 @@ void set_response(int code, response_data &response_data, code_status status)
 
     /* headers */
 
-    response_data.headers.content_type = get_content_type(status.error_pages[code],status.content_types);
     response_data.headers.content_length = std::to_string(response_data.body.length());
+    response_data.headers.content_type = get_content_type(status.error_pages[code],status.content_types);
+
+	response+= response_data.start_line.host + " " + response_data.start_line.status + '\r' + '\n' + 
+			   "Content-Length: " + response_data.headers.content_length + '\r' + '\n' + "Content-Type: " + response_data.headers.content_type + 
+			   '\r' + '\n' + '\n' + response_data.body + '\r' + '\n' + '\r' + '\n';
+	std::cout << response << std::endl;
 
 }
 
