@@ -38,7 +38,7 @@ config fill_config(config config_file)
     // config_file.index[0] = "index.html";
     // config_file.index[1] = "about.html";
     config_file.autoindex = "on";
-    config_file.path_autoindex = "/default-pages/auto-index.html";
+    config_file.path_autoindex = "/default-pages/autoindex.html";
     return config_file;
 }
 
