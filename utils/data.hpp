@@ -28,7 +28,7 @@ typedef struct info{
 
 my_request fill_request(my_request request){
     request.method = "GET";
-    request.uri = "/directory/";
+    request.uri = "/default-page/index-auto.html";
     return request;
 }
 

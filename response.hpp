@@ -14,7 +14,7 @@ void    response_get_method(info data, response_data &response_data)
     code_status status;
     
     status = fill_status(status);
-    if(is_directory((data.config_file.root + data.request.uri).c_str()))
+    if(location_match((data.config_file.root + data.request.uri).c_str(),response_data,status) && is_directory((data.config_file.root + data.request.uri).c_str()))
         {
             if(is_slash_in_end(data.request.uri,response_data,status))
             {

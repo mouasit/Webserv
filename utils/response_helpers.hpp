@@ -255,6 +255,17 @@ bool is_directory(const char *uri)
         return true;
     return false;
 }
+bool location_match(const char *uri,response_data &response_data, code_status status)
+{
+
+	struct stat buff;
+	if(lstat(uri,&buff) == -1)
+	{
+		set_response(404,response_data,status);
+		return false;
+	}
+	return true;
+}
 
 bool is_slash_in_end(std::string uri, response_data &response_data,code_status status)
 {
