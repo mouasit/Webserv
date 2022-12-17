@@ -26,13 +26,15 @@ void    response_get_method(info data, response_data &response_data)
                         // run cgi on requested file with GET request method.
                     }
                     else{
-                        set_response(200,response_data,status);
+                        // get index file from indexs in config_file.
+                        set_response(200,response_data,status,data.config_file.root + data.request.uri);
                     }
                 }
                 else{
                     if(is_auto_index(data.config_file.autoindex,response_data,status))
                     {
-                        set_response(200,response_data,status);
+                        std::cout << data.config_file.path_autoindex << std::endl;
+                        set_response(200,response_data,status,data.config_file.root + data.config_file.path_autoindex);
                     }
                 }
             }
@@ -44,7 +46,7 @@ void    response_get_method(info data, response_data &response_data)
             }
             else
             {
-                set_response(200,response_data,status);
+                set_response(200,response_data,status,data.config_file.root + data.request.uri);
             }
         }
 }

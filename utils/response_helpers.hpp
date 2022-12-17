@@ -187,6 +187,8 @@ std::string get_body(std::string path_file)
     std::ifstream file(path_file);
     std::string body;
 
+
+
     if(file.is_open())
     {
         while (file)
@@ -196,13 +198,36 @@ std::string get_body(std::string path_file)
     return body;
 }
 
-void set_response(int code, response_data &response_data, code_status status)
+std::string get_body_error_page(int code, std::string message)
+{
+	std::string body = "<!DOCTYPE html>\n"\
+"<html lang=\"en\">\n"\
+"<head>\n"\
+"    <meta charset=\"UTF-8\">\n"\
+"    <meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\">\n"\
+"    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n"\
+"    <title>" + std::to_string(code) + " " + message + "</title>\n"\
+"    <style>\n"\
+"        h1{text-align: center;}\n"\
+"    </style>\n"\
+"</head>\n"\
+"<body>\n"\
+"    <h1>" + std::to_string(code) + " " + message +"</h1>\n"\
+"    <hr>\n"\
+"</body>\n"\
+"</html>";
+	return body;
+}
+
+void set_response(int code, response_data &response_data, code_status status, std::string file_request = "")
 {
 	std::string response;
 
     /* body */
-
-    response_data.body = get_body(status.error_pages[code]);
+	if(file_request.length() == 0)
+    	response_data.body = get_body_error_page(code,status.message_status[code]);
+	else
+		response_data.body = get_body(file_request);
 
     /* start line */
 
@@ -217,7 +242,7 @@ void set_response(int code, response_data &response_data, code_status status)
 	response+= response_data.start_line.host + " " + response_data.start_line.status + '\r' + '\n' + 
 			   "Content-Length: " + response_data.headers.content_length + '\r' + '\n' + "Content-Type: " + response_data.headers.content_type + 
 			   '\r' + '\n' + '\n' + response_data.body + '\r' + '\n' + '\r' + '\n';
-	std::cout << response << std::endl;
+	std::cout << response;
 
 }
 

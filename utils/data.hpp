@@ -17,6 +17,7 @@ typedef struct config{
     std::string root;
     std::string autoindex;
     std::string index[0];
+    std::string path_autoindex;
 
 } config;
 
@@ -36,7 +37,8 @@ config fill_config(config config_file)
     config_file.root = ".";
     // config_file.index[0] = "index.html";
     // config_file.index[1] = "about.html";
-    config_file.autoindex = "off";
+    config_file.autoindex = "on";
+    config_file.path_autoindex = "/default-pages/auto-index.html";
     return config_file;
 }
 
