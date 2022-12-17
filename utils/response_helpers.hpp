@@ -4,6 +4,7 @@
 #include <iostream>
 #include <fstream>
 #include <sys/stat.h>
+#include <dirent.h>
 #include <map>
 
 
@@ -305,6 +306,41 @@ bool is_auto_index(std::string autoIndex, response_data &response_data, code_sta
         return true;
     set_response(403,response_data,status);
     return false;
+}
+
+std::string get_autoindex_directory(std::string root_path)
+{
+	std::string body;
+	DIR *d;
+    struct dirent *dir;
+
+    d = opendir("./");
+    if (d)
+    {
+        while ((dir = readdir(d)) != NULL)
+        {
+            printf("%s\n", dir->d_name);
+        }
+        closedir(d);
+    }
+
+	body = "<!DOCTYPE html>\n"\
+"<html lang=\"en\">\n"\
+"<head>\n"\
+"    <meta charset=\"UTF-8\">\n"\
+"    <meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\">\n"\
+"    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n"\
+"    <title>Auto Index</title>\n"\
+"    <style>\n"\
+"        h1{text-align: center;}\n"\
+"    </style>\n"\
+"</head>\n"\
+"<body>\n"\
+"    <a href=\"#\">default-pages</a>\n"\
+"</body>\n"\
+"</html>";
+
+return body;
 }
 
 #endif
