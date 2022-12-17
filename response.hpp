@@ -28,13 +28,15 @@ void    response_get_method(info data, response_data &response_data)
                     }
                     else{
                         // get index file from indexs in config_file.
-                        set_response(200,response_data,status,data.config_file.root + data.request.uri);
+                        data.pages.page_request = data.config_file.root + data.request.uri;
+                        set_response(200,response_data,status,data.pages);
                     }
                 }
                 else{
                     if(is_auto_index(data.config_file.autoindex,response_data,status))
                     {
-                        set_response(200,response_data,status,get_autoindex_directory(data.config_file.path_autoindex));
+                        data.pages.string_page_request = get_autoindex_directory(data.config_file.path_autoindex);
+                        set_response(200,response_data,status,data.pages);
                     }
                 }
             }
@@ -46,7 +48,8 @@ void    response_get_method(info data, response_data &response_data)
             }
             else
             {
-                set_response(200,response_data,status,data.config_file.root + data.request.uri);
+                data.pages.page_request = data.config_file.root + data.request.uri;
+                set_response(200,response_data,status,data.pages);
             }
         }
     }

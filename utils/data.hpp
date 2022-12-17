@@ -3,32 +3,12 @@
 
 #include <iostream>
 #include <map>
+#include "response_helpers.hpp"
 
-typedef struct my_request{
-
-    std::string method;
-    std::string uri;
-
-} my_request;
-
-
-typedef struct config{
-
-    std::string root;
-    std::string autoindex;
-    std::string index[0];
-    std::string path_autoindex;
-
-} config;
-
-typedef struct info{
-    my_request request;
-    config config_file;
-} info;
 
 my_request fill_request(my_request request){
     request.method = "GET";
-    request.uri = "/directory/";
+    request.uri = "/index.html";
     return request;
 }
 
@@ -46,6 +26,9 @@ info fill_data(info &data)
 {
     data.request = fill_request(data.request);
     data.config_file = fill_config(data.config_file);
+    
+    data.pages.page_request = "";
+    data.pages.string_page_request = "";
     return data;
 }
 

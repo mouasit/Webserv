@@ -6,6 +6,9 @@
 #include <sys/stat.h>
 #include <dirent.h>
 #include <map>
+#include <vector>
+#include <cstring>
+
 
 
 typedef struct start_line{
@@ -30,6 +33,40 @@ typedef struct code_status{
     std::map<int,std::string> error_pages;
     std::map<std::string,std::string> content_types;
 }code_status;
+
+
+
+
+typedef struct my_request{
+
+    std::string method;
+    std::string uri;
+
+} my_request;
+
+
+typedef struct config{
+
+    std::string root;
+    std::string autoindex;
+    std::string index[0];
+    std::string path_autoindex;
+
+} config;
+
+typedef struct pages_type{
+	std::string page_request;
+	std::string string_page_request;
+}pages_type;
+
+typedef struct info{
+    my_request request;
+    config config_file;
+    pages_type pages;
+} info;
+
+
+
 
 std::map<int,std::string> fill_message_status(std::map<int,std::string> message_status)
 {
@@ -220,16 +257,20 @@ std::string get_body_error_page(int code, std::string message)
 	return body;
 }
 
-void set_response(int code, response_data &response_data, code_status status, std::string file_request = "")
+void set_response(int code, response_data &response_data, code_status status, pages_type pages = pages_type())
 {
 	std::string response;
 
     /* body */
-	if(file_request.length() == 0)
+	if(!(pages.page_request.length()) && !(pages.string_page_request.length()))
     	response_data.body = get_body_error_page(code,status.message_status[code]);
 	else
-		response_data.body = get_body(file_request);
-
+	{
+		if(pages.page_request.length())
+			response_data.body = get_body(pages.page_request);
+		else
+			response_data.body = pages.string_page_request;
+	}
     /* start line */
 
     response_data.start_line.host = "HTTP/1.1";
@@ -311,18 +352,29 @@ bool is_auto_index(std::string autoIndex, response_data &response_data, code_sta
 std::string get_autoindex_directory(std::string root_path)
 {
 	std::string body;
+	std::vector<std::string> list_files;
+	std::string links;
+
 	DIR *d;
     struct dirent *dir;
+
+	(void)root_path;
 
     d = opendir("./");
     if (d)
     {
         while ((dir = readdir(d)) != NULL)
         {
-            printf("%s\n", dir->d_name);
+			if(strcmp(dir->d_name,".") != 0 && strcmp(dir->d_name,"..") != 0 && strcmp(dir->d_name,".git") != 0)
+			list_files.push_back(dir->d_name);
         }
         closedir(d);
     }
+
+	for (size_t i = 0; i < list_files.size(); i++)
+	{
+		links+= "    <a href=\"#\">" + list_files[i] + "</a>\n";
+	}
 
 	body = "<!DOCTYPE html>\n"\
 "<html lang=\"en\">\n"\
@@ -336,7 +388,7 @@ std::string get_autoindex_directory(std::string root_path)
 "    </style>\n"\
 "</head>\n"\
 "<body>\n"\
-"    <a href=\"#\">default-pages</a>\n"\
++ links + "\n"\
 "</body>\n"\
 "</html>";
 
