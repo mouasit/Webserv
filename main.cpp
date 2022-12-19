@@ -1,10 +1,16 @@
 #include "response.hpp"
 
+// read froom fiile
+
+
 int main(){
+    
+    std::vector<Vserver> config_file;
     info data;
     response_data response_data;
 
-    data = fill_data(data);
+    config_file = parsingConfigFile("file.config");
+    data = fill_data(data,config_file);
 
     if(data.request.method == "GET")
     {

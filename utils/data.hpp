@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <map>
+#include "../config_file/parser.hpp"
 #include "response_helpers.hpp"
 
 
@@ -22,11 +23,13 @@ config fill_config(config config_file)
     return config_file;
 }
 
-info fill_data(info &data)
+info fill_data(info &data,std::vector<Vserver> config_file)
 {
     data.request = fill_request(data.request);
     data.config_file = fill_config(data.config_file);
-    
+
+    std::cout << config_file[0]._locations[0]._index[0]<< std::endl;
+
     data.pages.page_request = "";
     data.pages.string_page_request = "";
     return data;

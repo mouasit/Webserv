@@ -1,7 +1,7 @@
 NAME = response
 
-SRC =  main.cpp
-HEADERS = response.hpp
+SRC =  main.cpp ./config_file/parser.cpp
+HEADERS = response.hpp ./config_file/parser.hpp
 
 all : $(NAME)
 
