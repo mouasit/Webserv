@@ -263,13 +263,23 @@ void set_response(int code, response_data &response_data, code_status status, pa
 
     /* body */
 	if(!(pages.page_request.length()) && !(pages.string_page_request.length()))
+	{
     	response_data.body = get_body_error_page(code,status.message_status[code]);
+    	response_data.headers.content_type = "text/html";
+	}
 	else
 	{
 		if(pages.page_request.length())
-			response_data.body = get_body(pages.page_request);
+		{
+			response_data.body = get_body(pages.page_request);			
+    		response_data.headers.content_type = get_content_type(pages.page_request,status.content_types);
+		}
 		else
+		{
+
 			response_data.body = pages.string_page_request;
+    		response_data.headers.content_type = "text/html";
+		}
 	}
     /* start line */
 
@@ -279,7 +289,6 @@ void set_response(int code, response_data &response_data, code_status status, pa
     /* headers */
 
     response_data.headers.content_length = std::to_string(response_data.body.length());
-    response_data.headers.content_type = get_content_type(status.error_pages[code],status.content_types);
 
 	response+= response_data.start_line.host + " " + response_data.start_line.status + '\r' + '\n' + 
 			   "Content-Length: " + response_data.headers.content_length + '\r' + '\n' + "Content-Type: " + response_data.headers.content_type + 
