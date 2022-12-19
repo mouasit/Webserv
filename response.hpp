@@ -36,7 +36,7 @@ void    response_get_method(info data, response_data &response_data)
                 else{
                     if(is_auto_index(data.config_file.autoindex,response_data,status))
                     {
-                        data.pages.string_page_request = get_autoindex_directory(data.config_file.path_autoindex);
+                        data.pages.string_page_request = get_autoindex_directory(data.config_file.root);
                         set_response(200,response_data,status,data.pages);
                     }
                 }

@@ -50,7 +50,6 @@ typedef struct config{
     std::string root;
     std::string autoindex;
     std::string index[0];
-    std::string path_autoindex;
 
 } config;
 
@@ -210,6 +209,17 @@ code_status  fill_status(code_status status)
     return status;
 }
 
+std::string get_root_path(std::string root_path, std::vector<Location> locations, std::string request_uri)
+{
+	for (size_t i = 0; i < locations.size(); i++)
+	{
+		if(locations[i]._locationPath == request_uri)
+			return locations[i]._rootPath;
+	}
+
+	return (root_path);
+}
+
 std::string get_content_type(std::string path_file, std::map<std::string,std::string> content_types)
 {
     std::string extention;
@@ -367,9 +377,7 @@ std::string get_autoindex_directory(std::string root_path)
 	DIR *d;
     struct dirent *dir;
 
-	(void)root_path;
-
-    d = opendir("./");
+    d = opendir(root_path.c_str());
     if (d)
     {
         while ((dir = readdir(d)) != NULL)

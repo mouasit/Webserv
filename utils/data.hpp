@@ -9,26 +9,24 @@
 
 my_request fill_request(my_request request){
     request.method = "GET";
-    request.uri = "/index.html";
+    request.uri = "/";
     return request;
 }
 
-config fill_config(config config_file)
+config fill_config(config newConfig, std::vector<Vserver> config_file,std::string request_uri)
 {
-    config_file.root = ".";
-    // config_file.index[0] = "index.html";
-    // config_file.index[1] = "about.html";
-    config_file.autoindex = "on";
-    config_file.path_autoindex = "./";
-    return config_file;
+
+    newConfig.root = get_root_path(config_file[0]._rootPath,config_file[0]._locations,request_uri);
+    // newConfig.index[0] = "index.html";
+    // newConfig.index[1] = "about.html";
+    newConfig.autoindex = "on";
+    return newConfig;
 }
 
 info fill_data(info &data,std::vector<Vserver> config_file)
 {
     data.request = fill_request(data.request);
-    data.config_file = fill_config(data.config_file);
-
-    std::cout << config_file[0]._locations[0]._index[0]<< std::endl;
+    data.config_file = fill_config(data.config_file, config_file, data.request.uri);
 
     data.pages.page_request = "";
     data.pages.string_page_request = "";
