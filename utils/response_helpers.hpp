@@ -67,8 +67,6 @@ typedef struct info{
 } info;
 
 
-
-
 std::map<int,std::string> fill_message_status(std::map<int,std::string> message_status)
 {
     message_status.insert(std::make_pair(200,"OK"));
@@ -76,6 +74,9 @@ std::map<int,std::string> fill_message_status(std::map<int,std::string> message_
     message_status.insert(std::make_pair(301,"Moved Permanently"));
     message_status.insert(std::make_pair(403,"Forbidden"));
     message_status.insert(std::make_pair(405,"Method Not Allowed"));
+    message_status.insert(std::make_pair(400,"Bad Request"));
+    message_status.insert(std::make_pair(414,"Request-URI Too Long"));
+    message_status.insert(std::make_pair(413,"Request Entity Too Large"));
     return message_status;
 }
 
@@ -355,6 +356,21 @@ void set_response(int code, response_data &response_data, code_status status, in
 			   '\r' + '\n' + '\n' + response_data.body + '\r' + '\n' + '\r' + '\n';
 	std::cout << response;
 
+}
+
+bool request_valid(my_request request,response_data &response_data, code_status status)
+{
+	if(request.uri.find_first_not_of("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~:/?#[]@!$&'()*+,;=%") != std::string::npos)
+	{
+		set_response(400,response_data,status);
+		return false;
+	}
+	if(request.uri.length() > 2048)
+	{
+		set_response(414,response_data,status);
+		return false;
+	}
+	return true;
 }
 
 bool check_redirection(info &data, response_data &response_data,code_status status)

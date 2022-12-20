@@ -14,21 +14,24 @@ int main(){
     data = fill_data(data,config_file);
     status = fill_status(status);
 
-    if(method_allowed(data.request.method))
+    if(request_valid(data.request,response_data,status))
     {
-        if(data.request.method == "GET")
+        if(method_allowed(data.request.method))
         {
-            response_get_method(data,status,response_data);
-        }
-        if(data.request.method == "POST")
-        {
+            if(data.request.method == "GET")
+            {
+                response_get_method(data,status,response_data);
+            }
+            if(data.request.method == "POST")
+            {
 
-        }
-        if(data.request.method == "DELETE")
-        {
+            }
+            if(data.request.method == "DELETE")
+            {
 
-        }
+            }
     }
     else
         set_response(405,response_data,status);
+    }
 }

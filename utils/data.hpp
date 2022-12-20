@@ -8,7 +8,7 @@
 
 
 my_request fill_request(my_request request){
-    request.method = "NOT";
+    request.method = "GET";
     request.host = "127.0.0.1";
     request.uri = "";
     return request;
@@ -17,7 +17,7 @@ my_request fill_request(my_request request){
 config fill_config(config newConfig, std::vector<Vserver> config_file,std::string request_uri)
 {
     newConfig.root = get_root_path(config_file[0]._rootPath,config_file[0]._locations,request_uri);
-    newConfig.autoindex = "on";
+    newConfig.autoindex = config_file[0]._locations[0]._autoindex;
 
     newConfig.redirection.first = config_file[0]._locations[0]._redirection.first;
     newConfig.redirection.second = config_file[0]._locations[0]._redirection.second;
