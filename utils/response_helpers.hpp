@@ -51,6 +51,7 @@ typedef struct config{
     std::string root;
     std::string autoindex;
     std::string index[0];
+	std::pair<std::string, std::string> redirection;
 
 } config;
 
@@ -343,6 +344,17 @@ void set_response(int code, response_data &response_data, code_status status, in
 			   '\r' + '\n' + '\n' + response_data.body + '\r' + '\n' + '\r' + '\n';
 	std::cout << response;
 
+}
+
+bool check_redirection(info &data, response_data &response_data,code_status status)
+{
+	if(data.config_file.redirection.first.length())
+	{
+		data.request.uri = data.config_file.redirection.second;
+		set_response(301,response_data,status,data);
+		return true;
+	}
+	return false;
 }
 
 bool is_directory(const char *uri)

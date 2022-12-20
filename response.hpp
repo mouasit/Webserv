@@ -14,7 +14,9 @@ void    response_get_method(info data, response_data &response_data)
 {
     code_status status;
     status = fill_status(status);
-    if(resource_root((data.config_file.root).c_str(),response_data,status))
+    if(!check_redirection(data,response_data,status))
+    {
+        if(resource_root((data.config_file.root).c_str(),response_data,status))
     {
         if(is_directory((data.config_file.root).c_str()))
         {
@@ -52,6 +54,7 @@ void    response_get_method(info data, response_data &response_data)
                 set_response(200,response_data,status,data);
             }
         }
+    }
     }
 }
 

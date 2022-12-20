@@ -17,9 +17,9 @@ my_request fill_request(my_request request){
 config fill_config(config newConfig, std::vector<Vserver> config_file,std::string request_uri)
 {
     newConfig.root = get_root_path(config_file[0]._rootPath,config_file[0]._locations,request_uri);
-    // newConfig.index[0] = "index.html";
-    // newConfig.index[1] = "about.html";
     newConfig.autoindex = "on";
+    newConfig.redirection.first = config_file[0]._locations[0]._redirection.first;
+    newConfig.redirection.second = config_file[0]._locations[0]._redirection.second;
     return newConfig;
 }
 
