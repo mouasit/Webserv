@@ -10,10 +10,8 @@
 
 /* ------------------------ GET method ------------------------ */
 
-void    response_get_method(info data, response_data &response_data)
+void    response_get_method(info data, code_status status ,response_data &response_data)
 {
-    code_status status;
-    status = fill_status(status);
     if(!check_redirection(data,response_data,status))
     {
         if(resource_root((data.config_file.root).c_str(),response_data,status))

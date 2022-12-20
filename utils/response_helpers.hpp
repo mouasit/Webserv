@@ -75,6 +75,7 @@ std::map<int,std::string> fill_message_status(std::map<int,std::string> message_
     message_status.insert(std::make_pair(404,"Not Found"));
     message_status.insert(std::make_pair(301,"Moved Permanently"));
     message_status.insert(std::make_pair(403,"Forbidden"));
+    message_status.insert(std::make_pair(405,"Method Not Allowed"));
     return message_status;
 }
 
@@ -201,6 +202,13 @@ std::map<std::string,std::string> fill_content_types(std::map<std::string,std::s
 	content_types["avi"] = "video/x-msvideo";
 
     return content_types;
+}
+
+bool method_allowed(std::string method)
+{
+	if(method != "GET" && method != "POST" && method != "DELETE")
+		return false;
+	return true;
 }
 
 code_status  fill_status(code_status status)

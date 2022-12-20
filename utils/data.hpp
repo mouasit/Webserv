@@ -8,7 +8,7 @@
 
 
 my_request fill_request(my_request request){
-    request.method = "GET";
+    request.method = "NOT";
     request.host = "127.0.0.1";
     request.uri = "";
     return request;
