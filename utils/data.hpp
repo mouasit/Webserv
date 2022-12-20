@@ -9,13 +9,13 @@
 
 my_request fill_request(my_request request){
     request.method = "GET";
-    request.uri = "/";
+    request.host = "127.0.0.1";
+    request.uri = "/kapouet/pouic/toto/pouet";
     return request;
 }
 
 config fill_config(config newConfig, std::vector<Vserver> config_file,std::string request_uri)
 {
-
     newConfig.root = get_root_path(config_file[0]._rootPath,config_file[0]._locations,request_uri);
     // newConfig.index[0] = "index.html";
     // newConfig.index[1] = "about.html";

@@ -8,7 +8,7 @@
 #include <map>
 #include <vector>
 #include <cstring>
-
+#include <string.h>
 
 
 typedef struct start_line{
@@ -40,6 +40,7 @@ typedef struct code_status{
 typedef struct my_request{
 
     std::string method;
+	std::string host;
     std::string uri;
 
 } my_request;
@@ -211,13 +212,36 @@ code_status  fill_status(code_status status)
 
 std::string get_root_path(std::string root_path, std::vector<Location> locations, std::string request_uri)
 {
-	for (size_t i = 0; i < locations.size(); i++)
-	{
-		if(locations[i]._locationPath == request_uri)
-			return locations[i]._rootPath;
-	}
+  char *token;
+  std::string path;
 
-	return (root_path);
+  token = strtok ((char*)request_uri.c_str(),"/");
+  if(token)
+ 	path = "/" + (std::string)token;
+else
+	path = "/";
+
+for (size_t i = 0; i < locations.size(); i++)
+	{
+		if(locations[i]._locationPath == path)
+		{
+			if(!locations[i]._rootPath.length())
+			{
+				if (root_path[root_path.length() - 1] != '/')
+					root_path += "/";
+				root_path+= token;
+				return root_path;
+			}
+			for (;token != NULL;)
+			{
+				token = strtok (NULL, "/");
+				if(token != NULL)
+					locations[i]._rootPath += "/" + (std::string)token;
+  			}
+			return locations[i]._rootPath;
+		}
+	}
+	return "";
 }
 
 std::string get_content_type(std::string path_file, std::map<std::string,std::string> content_types)
@@ -267,10 +291,24 @@ std::string get_body_error_page(int code, std::string message)
 	return body;
 }
 
-void set_response(int code, response_data &response_data, code_status status, pages_type pages = pages_type())
+std::string add_location(int code, my_request request)
+{
+	if (code == 301)
+		return "Location: http://" + request.host + request.uri + "/";
+	return "";
+}
+
+std::string add_contents(int code, std::string length, std::string type)
+{
+	if (code != 301)
+		return "Content-Length: " + length + '\r' + '\n' + "Content-Type: " + type;
+	return"";
+}
+
+void set_response(int code, response_data &response_data, code_status status, info data = info())
 {
 	std::string response;
-
+	pages_type pages = data.pages;
     /* body */
 	if(!(pages.page_request.length()) && !(pages.string_page_request.length()))
 	{
@@ -297,11 +335,11 @@ void set_response(int code, response_data &response_data, code_status status, pa
     response_data.start_line.status = std::to_string(code) + " " + status.message_status[code];
 
     /* headers */
-
     response_data.headers.content_length = std::to_string(response_data.body.length());
 
 	response+= response_data.start_line.host + " " + response_data.start_line.status + '\r' + '\n' + 
-			   "Content-Length: " + response_data.headers.content_length + '\r' + '\n' + "Content-Type: " + response_data.headers.content_type + 
+			   add_location(code,data.request) +
+			   add_contents(code,response_data.headers.content_length, response_data.headers.content_type) + 
 			   '\r' + '\n' + '\n' + response_data.body + '\r' + '\n' + '\r' + '\n';
 	std::cout << response;
 
@@ -316,11 +354,10 @@ bool is_directory(const char *uri)
         return true;
     return false;
 }
-bool location_match(const char *uri,response_data &response_data, code_status status)
+bool resource_root(const char *root,response_data &response_data, code_status status)
 {
-
-	struct stat buff;
-	if(lstat(uri,&buff) == -1)
+	struct stat buff; 
+	if(lstat(root,&buff) == -1)
 	{
 		set_response(404,response_data,status);
 		return false;
@@ -328,7 +365,7 @@ bool location_match(const char *uri,response_data &response_data, code_status st
 	return true;
 }
 
-bool is_slash_in_end(std::string uri, response_data &response_data,code_status status)
+bool is_slash_in_end(info data, response_data &response_data,code_status status)
 {
     /* 
         ------------- TODO -------------
@@ -336,9 +373,9 @@ bool is_slash_in_end(std::string uri, response_data &response_data,code_status s
             - make a 301 redirection to request uri with '/' addeed at the end.
      */
 
-    if(uri[uri.length() - 1] == '/')
+    if(data.request.uri[data.request.uri.length() - 1] == '/')
         return true;
-    set_response(301,response_data,status);
+    set_response(301,response_data,status,data);
     return false;
 }
 
