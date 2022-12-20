@@ -10,16 +10,21 @@
 my_request fill_request(my_request request){
     request.method = "GET";
     request.host = "127.0.0.1";
-    request.uri = "/kapouet/pouic/toto/pouet";
+    request.uri = "/kapouet/pouic/toto/pouet/";
     return request;
 }
 
 config fill_config(config newConfig, std::vector<Vserver> config_file,std::string request_uri)
 {
     newConfig.root = get_root_path(config_file[0]._rootPath,config_file[0]._locations,request_uri);
-    newConfig.autoindex = "on";
+
+    newConfig.autoindex = "off";
+
     newConfig.redirection.first = config_file[0]._locations[0]._redirection.first;
     newConfig.redirection.second = config_file[0]._locations[0]._redirection.second;
+    
+    newConfig.index = config_file[0]._locations[0]._index;
+
     return newConfig;
 }
 

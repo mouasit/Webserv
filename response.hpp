@@ -22,7 +22,7 @@ void    response_get_method(info data, response_data &response_data)
         {
             if(is_slash_in_end(data,response_data,status))
             {
-                if(check_index_files(data.config_file))
+                if(check_index_files(data))
                 {
                     if(location_has_cgi())
                     {

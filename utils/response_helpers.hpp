@@ -50,7 +50,7 @@ typedef struct config{
 
     std::string root;
     std::string autoindex;
-    std::string index[0];
+	std::vector<std::string> index;
 	std::pair<std::string, std::string> redirection;
 
 } config;
@@ -213,10 +213,12 @@ code_status  fill_status(code_status status)
 
 std::string get_root_path(std::string root_path, std::vector<Location> locations, std::string request_uri)
 {
+  std::string tmp = request_uri;
   char *token;
   std::string path;
 
-  token = strtok ((char*)request_uri.c_str(),"/");
+
+  token = strtok ((char*)tmp.c_str(),"/");
   if(token)
  	path = "/" + (std::string)token;
 else
@@ -239,6 +241,7 @@ for (size_t i = 0; i < locations.size(); i++)
 				if(token != NULL)
 					locations[i]._rootPath += "/" + (std::string)token;
   			}
+			locations[i]._rootPath += "/";
 			return locations[i]._rootPath;
 		}
 	}
@@ -379,28 +382,23 @@ bool resource_root(const char *root,response_data &response_data, code_status st
 
 bool is_slash_in_end(info data, response_data &response_data,code_status status)
 {
-    /* 
-        ------------- TODO -------------
-            
-            - make a 301 redirection to request uri with '/' addeed at the end.
-     */
-
     if(data.request.uri[data.request.uri.length() - 1] == '/')
         return true;
     set_response(301,response_data,status,data);
     return false;
 }
 
-bool check_index_files(config config_file)
+bool check_index_files(info &data)
 {
-        /* 
-        ------------- TODO -------------
-            
-            - check location files in index "if path file not found go to the next file".
-     */
-
-    if(sizeof(config_file.index)/sizeof(config_file.index[0]) > 0)
-        return true;
+	struct stat buff;
+	for (size_t i = 0; i < data.config_file.index.size(); i++)
+	{
+		if(lstat((data.config_file.root + data.config_file.index[i]).c_str() ,&buff) == 0)
+		{
+			data.config_file.root = data.config_file.root + data.config_file.index[i];
+			return true;
+		}
+	}
     return false;
 }
 
