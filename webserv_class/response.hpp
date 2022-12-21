@@ -2,7 +2,12 @@
 #define RESPONSE_HPP
 
 #include <iostream>
+#include <fstream>
+#include <sys/stat.h>
+#include <dirent.h>
+#include <map>
 #include <vector>
+#include <cstring>
 #include <string.h>
 #include "./config_file/parser.hpp"
 
@@ -16,15 +21,17 @@ class response{
         }request;
 
         typedef struct config_file{
+            Location server_location;
             std::string root;
             std::string autoindex;
 	        std::vector<std::string> index;
 	        std::pair<std::string, std::string> redirection;
-            Location server_location;
         }config_file;
         
-        std::string get_root_path(std::string root_path);
         Location    get_location(std::vector<Location> locations);
+        void        fill_config(Vserver server,Location location);
+        std::string get_root(std::string root, Location location);
+        bool        resource_root(std::string root);
     public:
         response(std::vector<Location> locations){
             
@@ -48,6 +55,7 @@ class response{
         bool        request_valid(request req, std::string max_body_size);
         bool        check_location_config_file(bool is_filled, std::pair<std::string,std::string> redirection);
         bool        method_allowed(std::string method);
+        void        GET_method(Vserver server, Location location);
 };
 
 #endif

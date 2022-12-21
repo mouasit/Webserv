@@ -65,3 +65,58 @@ bool response::method_allowed(std::string method)
     }
 	return true;
 }
+
+std::string response::get_root(std::string root, Location location)
+{
+    std::string temp = this->req.uri;
+    char        *token = strtok ((char*)temp.c_str(),"/");
+
+    if(!location._rootPath.length())
+    {
+        if(!root.length())
+            return "";
+        if (root[root.length() - 1] != '/')
+			root += "/";
+        if(token)
+            root+= token;
+		return root;
+    }
+    for (;token != NULL;)
+    {
+        token = strtok (NULL, "/");
+        if(token != NULL)
+            location._rootPath += "/" + (std::string)token;
+  	}
+    if(location._rootPath[location._rootPath.length() - 1] != '/')
+        location._rootPath += "/";
+	return location._rootPath;
+}
+
+void    response::fill_config(Vserver server,Location location)
+{
+    if(!this->req.uri.length())
+        this->req.uri = "/";
+    this->conf.root = this->get_root(server._rootPath,location);
+    this->conf.autoindex = server._autoindex;
+}
+
+bool    response::resource_root(std::string root)
+{
+    struct stat buff;
+	if(lstat(root.c_str(),&buff) == -1)
+	{
+        std::cout << 404 << " " << "Not Found" << std::endl;
+		return false;
+	}
+	return true;
+}
+
+
+void response::GET_method(Vserver server, Location location)
+{
+    this->fill_config(server,location);
+    if(resource_root(this->conf.root))
+    {
+
+    }
+}
