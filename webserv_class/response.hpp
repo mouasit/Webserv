@@ -31,14 +31,20 @@ class response{
         Location    get_location(std::vector<Location> locations);
         void        fill_config(Vserver server,Location location);
         std::string get_root(std::string root, Location location);
-        bool        resource_root(std::string root);
+        bool        resource_root();
+        bool        is_directory();
+        bool        is_slash_in_end();
+        bool        index_files();
+        bool        location_has_cgi();
+        bool        is_auto_index();
+        std::string get_auto_index_directory();
     public:
         response(std::vector<Location> locations){
             
             // fill request.
             this->req.method = "GET";
             this->req.host = "127.0.0.1";
-            this->req.uri = "/";
+            this->req.uri = "/test/";
             this->req.body = "";
 
             
