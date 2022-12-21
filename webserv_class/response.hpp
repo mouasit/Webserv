@@ -47,16 +47,26 @@ class response{
             this->req.uri = "/test/";
             this->req.body = "";
 
-            
             // fill location.
             this->conf.server_location = get_location(locations);
+
+            // fill errors.
+            errors.insert(std::make_pair(400,"Bad Request"));
+            errors.insert(std::make_pair(414,"Request-URI Too Long"));
+            errors.insert(std::make_pair(413,"Request Entity Too Large"));
+            errors.insert(std::make_pair(404,"Not Found"));
+            errors.insert(std::make_pair(301,"Moved Permanently"));
+            errors.insert(std::make_pair(405,"Method Not Allowed"));
+            errors.insert(std::make_pair(403,"Forbidden"));
+            errors.insert(std::make_pair(200,"OK"));
         };
         
         response(){};
         ~response(){};
 
-        request     req;
-        config_file conf;
+        request                   req;
+        config_file               conf;
+        std::map<int,std::string> errors;
 
         bool        request_valid(request req, std::string max_body_size);
         bool        check_location_config_file(bool is_filled, std::pair<std::string,std::string> redirection);

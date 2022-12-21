@@ -99,7 +99,6 @@ void    response::fill_config(Vserver server,Location location)
     if(!this->req.uri.length())
         this->req.uri = "/";
     this->conf.root = this->get_root(server._rootPath,location);
-    this->conf.autoindex = location._autoindex;
     this->conf.index = location._index;
     this->conf.autoindex = location._autoindex;
 
@@ -161,7 +160,7 @@ bool    response::location_has_cgi()
 
 bool    response::is_auto_index()
 {
-    if(!this->conf.server_location._autoindex.length() || this->conf.server_location._autoindex == "off")
+    if(!this->conf.autoindex.length() || this->conf.autoindex == "off")
     {
         std::cout << 403 << " " << "Forbidden" << std::endl;
         return false;
