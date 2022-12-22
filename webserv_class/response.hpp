@@ -37,7 +37,11 @@ class response{
         bool        index_files();
         bool        location_has_cgi();
         bool        is_auto_index();
+        void        fill_content_types();
         std::string get_auto_index_directory();
+        std::string get_body_res_page(int code);
+        std::string get_body(std::string path_file);
+        std::string get_content_type(std::string path_file);
     public:
         response(std::vector<Location> locations){
             
@@ -51,14 +55,17 @@ class response{
             this->conf.server_location = get_location(locations);
 
             // fill errors.
-            errors.insert(std::make_pair(400,"Bad Request"));
-            errors.insert(std::make_pair(414,"Request-URI Too Long"));
-            errors.insert(std::make_pair(413,"Request Entity Too Large"));
-            errors.insert(std::make_pair(404,"Not Found"));
-            errors.insert(std::make_pair(301,"Moved Permanently"));
-            errors.insert(std::make_pair(405,"Method Not Allowed"));
-            errors.insert(std::make_pair(403,"Forbidden"));
-            errors.insert(std::make_pair(200,"OK"));
+            message_status.insert(std::make_pair(400,"Bad Request"));
+            message_status.insert(std::make_pair(414,"Request-URI Too Long"));
+            message_status.insert(std::make_pair(413,"Request Entity Too Large"));
+            message_status.insert(std::make_pair(404,"Not Found"));
+            message_status.insert(std::make_pair(301,"Moved Permanently"));
+            message_status.insert(std::make_pair(405,"Method Not Allowed"));
+            message_status.insert(std::make_pair(403,"Forbidden"));
+            message_status.insert(std::make_pair(200,"OK"));
+
+            //fill content_types.
+            fill_content_types();
         };
         
         response(){};
@@ -66,12 +73,18 @@ class response{
 
         request                   req;
         config_file               conf;
-        std::map<int,std::string> errors;
+        std::map<int,std::string> message_status;
+        std::map<std::string,std::string> content_types;
 
         bool        request_valid(request req, std::string max_body_size);
         bool        check_location_config_file(bool is_filled, std::pair<std::string,std::string> redirection);
         bool        method_allowed(std::string method);
         void        GET_method(Vserver server, Location location);
+
+        void        set_response_error(int code);
+        void        set_response_permanently(int code,std::string redirection);
+        void        set_response_file(int code);
+        void        set_response_auto_index(int code,std::string body);
 };
 
 #endif
