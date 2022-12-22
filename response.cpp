@@ -2,7 +2,34 @@
 
 std::string response::get_body_res_page(int code)
 {
-	std::string body = "<!DOCTYPE html>\n"\
+   if(this->conf.server._errorPage.count(std::to_string(code)))
+   {
+        std::string             path;
+        std::string             temp = this->conf.server._errorPage[std::to_string(code)];
+        std::vector<char *>     list_locations;
+        char                    *token = strtok ((char*)temp.c_str(),"/");
+
+        // fill_tokens.
+        if(token)
+            list_locations.push_back(token);
+        for (;token != NULL;)
+        {
+            token = strtok(NULL,"/");
+            if(token != NULL)
+                list_locations.push_back(token);       
+        }
+        path += "./";
+        for (size_t i = 0; i < list_locations.size(); i++)
+        {
+            path += (std::string)list_locations[i] + "/";
+        }
+        path = path.substr(0, path.size()-1);
+        std::string body = get_body(path);
+        if(body.length())
+            return body;
+   }
+   
+   std::string body = "<!DOCTYPE html>\n"\
 "<html lang=\"en\">\n"\
 "<head>\n"\
 "    <meta charset=\"UTF-8\">\n"\
@@ -35,9 +62,6 @@ void response::set_response_error(int code)
 
     std::string response;
     data_response data;
-
-    std::cout << "error: " << this->conf.location._errorPage.size() << std::endl;
-    std::cout << "error1: " << this->conf.server._errorPage["500"] << std::endl;
 
     data.body = get_body_res_page(code);
     data.request_line = "HTTP/1.1 " + std::to_string(code) + " " + this->message_status[code];
