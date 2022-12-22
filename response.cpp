@@ -523,7 +523,6 @@ void    response::GET_method(Location location)
     this->fill_config(location);
     if(is_directory())
     {
-            std::cout << "directory" << std::endl;
             if(is_slash_in_end())
             {
                 if(index_files())

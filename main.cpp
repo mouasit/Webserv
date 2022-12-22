@@ -1,37 +1,24 @@
 #include "response.hpp"
 
-// read froom fiile
-
-
-int main(){
-    
+int main()
+{
     std::vector<Vserver> config_file;
-    info data;
-    response_data response_data;
-    code_status status;
-    
     config_file = parsingConfigFile("file.config");
-    data = fill_data(data,config_file);
-    status = fill_status(status);
+    response res(config_file[0]);
 
-    if(request_valid(data.request,response_data,status))
+    if(res.request_valid(res.req, config_file[0]._maxBodySize))
     {
-        if(method_allowed(data.request.method))
+        if(res.check_location_config_file(res.conf.location.is_filled,res.conf.location._redirection))
         {
-            if(data.request.method == "GET")
+            if(res.method_allowed(res.req.method))
             {
-                response_get_method(data,status,response_data);
+                if(res.req.method == "GET")
+                {
+                    res.GET_method(res.conf.location);
+                }
             }
-            if(data.request.method == "POST")
-            {
-
-            }
-            if(data.request.method == "DELETE")
-            {
-
-            }
+        }
     }
-    else
-        set_response(405,response_data,status);
-    }
+
+    return (0);
 }

@@ -32,6 +32,7 @@ struct Location
 	std::map<std::string, std::string>      _errorPage;
 	std::pair<std::string, std::string>                 _redirection;
 	std::set<std::string>                           	_allowed_methods;
+	bool												is_filled;
 };
 
 struct Vserver
