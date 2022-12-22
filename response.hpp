@@ -47,12 +47,11 @@ class response{
             // fill request.
             this->req.method = "GET";
             this->req.host = "127.0.0.1";
-            this->req.uri = "/test/";
+            this->req.uri = "";
             this->req.body = "";
 
             // fill locations.
             this->conf.location = get_location(server);
-
 
             // fill errors.
             message_status.insert(std::make_pair(400,"Bad Request"));

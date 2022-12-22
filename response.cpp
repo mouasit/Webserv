@@ -205,7 +205,8 @@ Location response::get_location(Vserver server)
     Location                server_location;
 
     // fill_tokens.
-    list_locations.push_back(token);
+    if(token)
+        list_locations.push_back(token);
     for (;token != NULL;)
     {
         token = strtok(NULL,"/");
@@ -240,7 +241,6 @@ Location response::get_location(Vserver server)
                 }
             }
         }
-        
         for (size_t i = 0; i < server._locations.size(); i++)
         {
                 std::string root = server._locations[i]._rootPath;
