@@ -178,21 +178,95 @@ bool    response::request_valid(request req,std::string max_body_size)
     return true;
 }
 
-Location response::get_location(std::vector<Location> locations)
+Location response::fill_location(Location server_location,Vserver server)
 {
-    std::string           temp = this->req.uri;
-    std::string           path = "/";
-    char                  *token = strtok ((char*)temp.c_str(),"/");
-    
-    if(token)
-        path += (std::string)token;
-    for (size_t i = 0; i < locations.size(); i++)
+    server_location._rootPath = server._rootPath;
+    server_location._autoindex = server._autoindex;
+    server_location._maxBodySize = server._maxBodySize;
+    server_location._uploadPath = server._uploadPath;
+    server_location._index = server._index;
+    server_location._errorPage = server._errorPage;
+    server_location._serverNames = server._serverNames;
+    server_location._redirection = server._redirection;
+    server_location._allowed_methods = server._allowed_methods;
+    return server_location;
+}
+
+Location response::get_location(Vserver server)
+{
+    if(!this->req.uri.length())
+        this->req.uri = "/";
+    std::string             temp = this->req.uri;
+    std::vector<char *>     list_locations;
+    std::string             uri;
+    size_t                  len;
+    char                    *token = strtok ((char*)temp.c_str(),"/");
+    struct stat             buff;
+    Location                server_location;
+
+    // fill_tokens.
+    list_locations.push_back(token);
+    for (;token != NULL;)
     {
-        if(locations[i]._locationPath == path)
+        token = strtok(NULL,"/");
+        if(token != NULL)
+            list_locations.push_back(token);       
+    }
+    
+    // choose location.
+    
+    len = list_locations.size();
+    if(server._locations.size())
+    {
+        while (len > 0)
         {
-            locations[i].is_filled = true;
-            return locations[i];
+            for (size_t i = 0; i < len; i++)
+                uri += "/" + (std::string)list_locations[i];
+            for (size_t i = 0; i < server._locations.size(); i++)
+            {
+                std::string root = server._locations[i]._rootPath;
+                
+                if(root[root.length() - 1] == '/')
+                    root = root.substr(0, root.size()-1);
+                if(server._locations[i]._locationPath == uri && lstat((root + this->req.uri).c_str(),&buff) == 0)
+                {
+                    server._locations[i].is_filled = true;
+                    return server._locations[i];
+                }
+                else
+                {
+                    uri= "";
+                    len--;
+                }
+            }
         }
+        
+        for (size_t i = 0; i < server._locations.size(); i++)
+        {
+                std::string root = server._locations[i]._rootPath;
+                
+                if(root[root.length() - 1] == '/')
+                    root = root.substr(0, root.size()-1);
+                if(server._locations[i]._locationPath == "/" && lstat((root + this->req.uri).c_str(),&buff) == 0)
+                {
+                    server._locations[i].is_filled = true;
+                    return server._locations[i];
+                }
+        }
+        
+    }
+    std::string root = server._rootPath;
+    std::string new_uri = this->req.uri;
+    
+    if(root[root.length() - 1] == '/')
+        root = root.substr(0, root.size()-1);
+    new_uri = new_uri.substr(0,new_uri.size()-1);
+    if(lstat((root + new_uri).c_str(),&buff) == 0)
+    {
+
+        server_location = fill_location(server_location,server);
+        server_location.is_filled = true;
+        return server_location;
     }
     return Location();
 }
@@ -253,8 +327,6 @@ std::string response::get_root(std::string root, Location location)
 
 void    response::fill_config(Vserver server,Location location)
 {
-    if(!this->req.uri.length())
-        this->req.uri = "/";
     this->conf.root = this->get_root(server._rootPath,location);
     this->conf.index = location._index;
     this->conf.autoindex = location._autoindex;

@@ -21,14 +21,14 @@ class response{
         }request;
 
         typedef struct config_file{
-            Location server_location;
+            Location location;
             std::string root;
             std::string autoindex;
 	        std::vector<std::string> index;
 	        std::pair<std::string, std::string> redirection;
         }config_file;
         
-        Location    get_location(std::vector<Location> locations);
+        Location    get_location(Vserver server);
         void        fill_config(Vserver server,Location location);
         std::string get_root(std::string root, Location location);
         bool        resource_root();
@@ -42,17 +42,19 @@ class response{
         std::string get_body_res_page(int code);
         std::string get_body(std::string path_file);
         std::string get_content_type(std::string path_file);
+        Location fill_location(Location server_location,Vserver server);
     public:
-        response(std::vector<Location> locations){
+        response(Vserver server){
             
             // fill request.
             this->req.method = "GET";
             this->req.host = "127.0.0.1";
-            this->req.uri = "/test/";
+            this->req.uri = "/index.html/";
             this->req.body = "";
 
-            // fill location.
-            this->conf.server_location = get_location(locations);
+            // fill locations.
+            this->conf.location = get_location(server);
+
 
             // fill errors.
             message_status.insert(std::make_pair(400,"Bad Request"));
