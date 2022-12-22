@@ -21,6 +21,7 @@ class response{
         }request;
 
         typedef struct config_file{
+            Vserver  server;
             Location location;
             std::string root;
             std::string autoindex;
@@ -47,11 +48,12 @@ class response{
             // fill request.
             this->req.method = "GET";
             this->req.host = "127.0.0.1";
-            this->req.uri = "";
+            this->req.uri = "/test/";
             this->req.body = "";
 
             // fill locations.
             this->conf.location = get_location(server);
+            this->conf.server = server;
 
             // fill errors.
             message_status.insert(std::make_pair(400,"Bad Request"));

@@ -36,6 +36,9 @@ void response::set_response_error(int code)
     std::string response;
     data_response data;
 
+    std::cout << "error: " << this->conf.location._errorPage.size() << std::endl;
+    std::cout << "error1: " << this->conf.server._errorPage["500"] << std::endl;
+
     data.body = get_body_res_page(code);
     data.request_line = "HTTP/1.1 " + std::to_string(code) + " " + this->message_status[code];
     data.headers.content_length = std::to_string(data.body.length());
