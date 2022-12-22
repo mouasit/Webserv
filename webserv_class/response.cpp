@@ -225,12 +225,12 @@ Location response::get_location(Vserver server)
             for (size_t i = 0; i < server._locations.size(); i++)
             {
                 std::string root = server._locations[i]._rootPath;
-                
                 if(root[root.length() - 1] == '/')
                     root = root.substr(0, root.size()-1);
-                if(server._locations[i]._locationPath == uri && lstat((root + this->req.uri).c_str(),&buff) == 0)
+                if(root.length() && server._locations[i]._locationPath == uri && lstat((root + this->req.uri).c_str(),&buff) == 0)
                 {
                     server._locations[i].is_filled = true;
+                    this->conf.root = root + this->req.uri;
                     return server._locations[i];
                 }
                 else
@@ -247,9 +247,10 @@ Location response::get_location(Vserver server)
                 
                 if(root[root.length() - 1] == '/')
                     root = root.substr(0, root.size()-1);
-                if(server._locations[i]._locationPath == "/" && lstat((root + this->req.uri).c_str(),&buff) == 0)
+                if(root.length() && server._locations[i]._locationPath == "/" && lstat((root + this->req.uri).c_str(),&buff) == 0)
                 {
                     server._locations[i].is_filled = true;
+                    this->conf.root = root + this->req.uri;
                     return server._locations[i];
                 }
         }
@@ -260,12 +261,13 @@ Location response::get_location(Vserver server)
     
     if(root[root.length() - 1] == '/')
         root = root.substr(0, root.size()-1);
-    new_uri = new_uri.substr(0,new_uri.size()-1);
-    if(lstat((root + new_uri).c_str(),&buff) == 0)
+    if(new_uri != "/") 
+        new_uri = new_uri.substr(0,new_uri.size()-1);
+    if(root.length() && lstat((root + new_uri).c_str(),&buff) == 0)
     {
-
         server_location = fill_location(server_location,server);
         server_location.is_filled = true;
+        this->conf.root = root + new_uri;
         return server_location;
     }
     return Location();
@@ -297,52 +299,10 @@ bool response::method_allowed(std::string method)
 	return true;
 }
 
-std::string response::get_root(std::string root, Location location)
+void    response::fill_config(Location location)
 {
-    std::string temp = this->req.uri;
-    char        *token = strtok ((char*)temp.c_str(),"/");
-
-    if(!location._rootPath.length())
-    {
-        if(!root.length())
-            return "";
-        if (root[root.length() - 1] != '/')
-			root += "/";
-        if(token)
-            root+= token;
-		return root;
-    }
-    for (;token != NULL;)
-    {
-        token = strtok (NULL, "/");
-        if(token != NULL)
-        {
-            if(location._rootPath[location._rootPath.length() - 1] != '/')
-                location._rootPath += "/";
-            location._rootPath += (std::string)token;
-        }
-  	}
-	return location._rootPath;
-}
-
-void    response::fill_config(Vserver server,Location location)
-{
-    this->conf.root = this->get_root(server._rootPath,location);
     this->conf.index = location._index;
     this->conf.autoindex = location._autoindex;
-
-
-}
-
-bool    response::resource_root()
-{
-    struct stat buff;
-	if(lstat(this->conf.root.c_str(),&buff) == -1)
-	{
-        set_response_error(404);
-		return false;
-	}
-	return true;
 }
 
 bool    response::is_directory()
@@ -558,13 +518,12 @@ void       response::fill_content_types()
 
 
 
-void    response::GET_method(Vserver server, Location location)
+void    response::GET_method(Location location)
 {
-    this->fill_config(server,location);
-    if(resource_root())
+    this->fill_config(location);
+    if(is_directory())
     {
-        if(is_directory())
-        {
+            std::cout << "directory" << std::endl;
             if(is_slash_in_end())
             {
                 if(index_files())
@@ -592,5 +551,4 @@ void    response::GET_method(Vserver server, Location location)
             else
                 set_response_file(200);
         }
-    }
 }

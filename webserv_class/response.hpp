@@ -29,9 +29,7 @@ class response{
         }config_file;
         
         Location    get_location(Vserver server);
-        void        fill_config(Vserver server,Location location);
-        std::string get_root(std::string root, Location location);
-        bool        resource_root();
+        void        fill_config(Location location);
         bool        is_directory();
         bool        is_slash_in_end();
         bool        index_files();
@@ -81,7 +79,7 @@ class response{
         bool        request_valid(request req, std::string max_body_size);
         bool        check_location_config_file(bool is_filled, std::pair<std::string,std::string> redirection);
         bool        method_allowed(std::string method);
-        void        GET_method(Vserver server, Location location);
+        void        GET_method(Location location);
 
         void        set_response_error(int code);
         void        set_response_permanently(int code,std::string redirection);

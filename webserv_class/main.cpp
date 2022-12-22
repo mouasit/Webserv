@@ -14,7 +14,7 @@ int main()
             {
                 if(res.req.method == "GET")
                 {
-                    res.GET_method(config_file[0],res.conf.location);
+                    res.GET_method(res.conf.location);
                 }
             }
         }
