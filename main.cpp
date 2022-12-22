@@ -4,21 +4,14 @@ int main()
 {
     std::vector<Vserver> config_file;
     config_file = parsingConfigFile("file.config");
-    response res(config_file[0]);
+    request my_request;
+    
+    my_request.method = "GET";
+    my_request.host = "127.0.0.1";
+    my_request.uri = "/test/";
+    my_request.body = "";
 
-    if(res.request_valid(res.req, config_file[0]._maxBodySize))
-    {
-        if(res.check_location_config_file(res.conf.location.is_filled,res.conf.location._redirection))
-        {
-            if(res.method_allowed(res.req.method))
-            {
-                if(res.req.method == "GET")
-                {
-                    res.GET_method(res.conf.location);
-                }
-            }
-        }
-    }
+    handle_response(config_file[0],my_request);
 
     return (0);
 }

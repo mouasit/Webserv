@@ -578,3 +578,23 @@ void    response::GET_method(Location location)
                 set_response_file(200);
         }
 }
+
+
+void    handle_response(Vserver server, request my_request)
+{
+    response res(server,my_request);
+    
+    if(res.request_valid(res.req, server._maxBodySize))
+    {
+        if(res.check_location_config_file(res.conf.location.is_filled,res.conf.location._redirection))
+        {
+            if(res.method_allowed(res.req.method))
+            {
+                if(res.req.method == "GET")
+                {
+                    res.GET_method(res.conf.location);
+                }
+            }
+        }
+    }
+}

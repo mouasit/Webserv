@@ -10,16 +10,10 @@
 #include <cstring>
 #include <string.h>
 #include "./config_file/parser.hpp"
+#include "./helpers.hpp"
 
 class response{
     private:
-        typedef struct request{
-            std::string method;
-	        std::string host;
-            std::string uri;
-            std::string body;
-        }request;
-
         typedef struct config_file{
             Vserver  server;
             Location location;
@@ -43,13 +37,10 @@ class response{
         std::string get_content_type(std::string path_file);
         Location fill_location(Location server_location,Vserver server);
     public:
-        response(Vserver server){
+        response(Vserver server, request my_request){
             
             // fill request.
-            this->req.method = "GET";
-            this->req.host = "127.0.0.1";
-            this->req.uri = "/test/";
-            this->req.body = "";
+            this->req = my_request;
 
             // fill locations.
             this->conf.location = get_location(server);
@@ -87,5 +78,8 @@ class response{
         void        set_response_file(int code);
         void        set_response_auto_index(int code,std::string body);
 };
+
+void    handle_response(Vserver server, request my_request);
+
 
 #endif
