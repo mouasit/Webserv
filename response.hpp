@@ -71,6 +71,7 @@ class response{
         bool        request_valid(request req, std::string max_body_size);
         bool        check_location_config_file(bool is_filled, std::pair<std::string,std::string> redirection);
         bool        method_allowed(std::string method);
+        bool        resource_root();
         void        GET_method(Location location);
 
         void        set_response_error(int code);

@@ -228,7 +228,6 @@ Location response::get_location(Vserver server)
     std::string             uri;
     size_t                  len;
     char                    *token = strtok ((char*)temp.c_str(),"/");
-    struct stat             buff;
     Location                server_location;
 
     // fill_tokens.
@@ -252,13 +251,9 @@ Location response::get_location(Vserver server)
                 uri += "/" + (std::string)list_locations[i];
             for (size_t i = 0; i < server._locations.size(); i++)
             {
-                std::string root = server._locations[i]._rootPath;
-                if(root[root.length() - 1] == '/')
-                    root = root.substr(0, root.size()-1);
-                if(root.length() && server._locations[i]._locationPath == uri && lstat((root + this->req.uri).c_str(),&buff) == 0)
+                if(server._locations[i]._locationPath == uri)
                 {
                     server._locations[i].is_filled = true;
-                    this->conf.root = root + this->req.uri;
                     return server._locations[i];
                 }
                 else
@@ -270,34 +265,16 @@ Location response::get_location(Vserver server)
         }
         for (size_t i = 0; i < server._locations.size(); i++)
         {
-                std::string root = server._locations[i]._rootPath;
-                
-                if(root[root.length() - 1] == '/')
-                    root = root.substr(0, root.size()-1);
-                if(root.length() && server._locations[i]._locationPath == "/" && lstat((root + this->req.uri).c_str(),&buff) == 0)
-                {
-                    server._locations[i].is_filled = true;
-                    this->conf.root = root + this->req.uri;
-                    return server._locations[i];
-                }
+            if(server._locations[i]._locationPath == "/")
+            {
+                server._locations[i].is_filled = true;
+                return server._locations[i];
+            }
         }
-        
     }
-    std::string root = server._rootPath;
-    std::string new_uri = this->req.uri;
-    
-    if(root[root.length() - 1] == '/')
-        root = root.substr(0, root.size()-1);
-    if(new_uri != "/") 
-        new_uri = new_uri.substr(0,new_uri.size()-1);
-    if(root.length() && lstat((root + new_uri).c_str(),&buff) == 0)
-    {
-        server_location = fill_location(server_location,server);
-        server_location.is_filled = true;
-        this->conf.root = root + new_uri;
-        return server_location;
-    }
-    return Location();
+    server_location = fill_location(server_location,server);
+    server_location.is_filled = true;
+    return server_location;
 }
 
 bool        response::check_location_config_file(bool is_filled, std::pair<std::string,std::string> redirection)
@@ -324,6 +301,25 @@ bool response::method_allowed(std::string method)
 		return false;
     }
 	return true;
+}
+
+bool    response::resource_root()
+{
+    std::string root = this->conf.location._rootPath;
+    struct stat buff;
+
+    if(root.length())
+    {
+        if(root[root.length() - 1] == '/')
+            root = root.substr(0, root.size()-1);
+        if(lstat((root + this->req.uri).c_str() ,&buff) == 0)
+        {
+            this->conf.root = root + this->req.uri;
+            return true;
+        }
+    }
+    set_response_error(404);
+    return false;
 }
 
 void    response::fill_config(Location location)
@@ -548,8 +544,11 @@ void       response::fill_content_types()
 void    response::GET_method(Location location)
 {
     this->fill_config(location);
-    if(is_directory())
+    if(resource_root())
     {
+        std::cout << "root: " << this->conf.root << std::endl;
+        if(is_directory())
+        {
             if(is_slash_in_end())
             {
                 if(index_files())
@@ -577,6 +576,7 @@ void    response::GET_method(Location location)
             else
                 set_response_file(200);
         }
+    }
 }
 
 
