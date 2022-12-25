@@ -561,11 +561,11 @@ void    handle_response(ServerData server, request my_request)
     {
         if(res.check_location_config_file(res.location.redirect))
         {
-            // if(res.method_allowed(res.req.method))
-            // {
+            if(res.method_allowed(res.req.method))
+            {
                 if(res.req.method == "GET")
                     res.GET_method();
-            // }
+            }
         }
     }
 }
