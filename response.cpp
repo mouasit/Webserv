@@ -92,11 +92,7 @@ void    response::set_response_permanently(int code,std::string redirection = ""
     data.request_line = "HTTP/1.1 " + std::to_string(code) + " " + this->message_status[code];
     data.headers.location = "Location: http://" + this->req.host;
     if(redirection.length())
-    {
-        if(redirection[0] != '/')
-            data.headers.location += "/";
-        data.headers.location += redirection;
-    }
+        data.headers.location ="Location: " + redirection;
     else
         data.headers.location += this->req.uri + "/";
     data.body = get_body_res_page(code);
