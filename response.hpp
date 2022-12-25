@@ -47,7 +47,7 @@ class response{
         request                   req;
         std::map<int,std::string> message_status;
         std::map<std::string,std::string> content_types;
-        const LocationData          location;
+        const LocationData                location;
         std::string                 root;
 
         bool        request_valid(request req, long max_body_size);

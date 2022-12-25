@@ -2,32 +2,33 @@
 
 std::string response::get_body_res_page(int code)
 {
-//    if(this->conf.location._errorPage.count(std::to_string(code)))
-//    {
-//         std::string             path;
-//         std::string             temp = this->conf.location._errorPage[std::to_string(code)];
-//         std::vector<char *>     list_locations;
-//         char                    *token = strtok ((char*)temp.c_str(),"/");
+    if(this->location.statusCode.count(code))
+    {
+        LocationData location = this->location;
+        std::string             path;
+        std::string             temp = location.statusCode[code];
+        std::vector<char *>     list_locations;
+        char                    *token = strtok ((char*)temp.c_str(),"/");
 
-//         // fill_tokens.
-//         if(token)
-//             list_locations.push_back(token);
-//         for (;token != NULL;)
-//         {
-//             token = strtok(NULL,"/");
-//             if(token != NULL)
-//                 list_locations.push_back(token);       
-//         }
-//         path += "./";
-//         for (size_t i = 0; i < list_locations.size(); i++)
-//         {
-//             path += (std::string)list_locations[i] + "/";
-//         }
-//         path = path.substr(0, path.size()-1);
-//         std::string body = get_body(path);
-//         if(body.length())
-//             return body;
-//    }
+        // fill_tokens.
+        if(token)
+            list_locations.push_back(token);
+        for (;token != NULL;)
+        {
+            token = strtok(NULL,"/");
+            if(token != NULL)
+                list_locations.push_back(token);       
+        }
+        path += "./";
+        for (size_t i = 0; i < list_locations.size(); i++)
+        {
+            path += (std::string)list_locations[i] + "/";
+        }
+        path = path.substr(0, path.size()-1);
+        std::string body = get_body(path);
+        if(body.length())
+            return body;
+    }
    
    std::string body = "<!DOCTYPE html>\n"\
 "<html lang=\"en\">\n"\
