@@ -74,114 +74,114 @@ void response::set_response_error(int code)
     std::cout << response << std::endl;
 }
 
-// void    response::set_response_permanently(int code,std::string redirection = "")
-// {
-//     typedef struct data_headers{
-//         std::string location;
-//     } data_headers;
-//     typedef struct data_response{
-//         std::string     request_line;
-//         data_headers    headers;
-//         std::string     body;
-//     } data_response;
+void    response::set_response_permanently(int code,std::string redirection = "")
+{
+    typedef struct data_headers{
+        std::string location;
+    } data_headers;
+    typedef struct data_response{
+        std::string     request_line;
+        data_headers    headers;
+        std::string     body;
+    } data_response;
 
-//     std::string response;
-//     data_response data;
+    std::string response;
+    data_response data;
 
-//     data.request_line = "HTTP/1.1 " + std::to_string(code) + " " + this->message_status[code];
-//     data.headers.location = "Location: http://" + this->req.host;
-//     if(redirection.length())
-//     {
-//         if(redirection[0] != '/')
-//             data.headers.location += "/";
-//         data.headers.location += this->conf.root + redirection;
-//     }
-//     else
-//         data.headers.location += this->req.uri + "/";
-//     data.body = get_body_res_page(code);
+    data.request_line = "HTTP/1.1 " + std::to_string(code) + " " + this->message_status[code];
+    data.headers.location = "Location: http://" + this->req.host;
+    if(redirection.length())
+    {
+        if(redirection[0] != '/')
+            data.headers.location += "/";
+        data.headers.location += redirection;
+    }
+    else
+        data.headers.location += this->req.uri + "/";
+    data.body = get_body_res_page(code);
     
-//     response+= data.request_line + '\r' + '\n' +
-//     data.headers.location + '\r' + '\n' + '\n' + data.body + '\r' + '\n' + '\r' + '\n';
+    response+= data.request_line + '\r' + '\n' +
+    data.headers.location + '\r' + '\n' + '\n' + data.body + '\r' + '\n' + '\r' + '\n';
 
-//     std::cout << response << std::endl;
+    std::cout << response << std::endl;
 
-// }
+}
 
-// std::string response::get_content_type(std::string path_file)
-// {
-//     std::string extention;
+std::string response::get_content_type(std::string path_file)
+{
+    std::string extention;
 
-//     extention = path_file.substr(path_file.find_last_of('.') + 1);
-//     if(this->content_types.count(extention))
-//         return(this->content_types[extention]);
-//     return "application/octet-stream";
-// }
+    extention = path_file.substr(path_file.find_last_of('.') + 1);
+    if(this->content_types.count(extention))
+        return(this->content_types[extention]);
+    return "application/octet-stream";
+}
 
-// std::string response::get_body(std::string path_file)
-// {
-//     std::ifstream file(path_file);
-//     std::string body;
+std::string response::get_body(std::string path_file)
+{
+    std::ifstream file(path_file);
+    std::string body;
 
-//     if(file.is_open())
-//     {
-//         while (file)
-//             body += file.get();
-//     }
-//     body[body.length() - 1] = '\0';
-//     return body;
-// }
+    if(file.is_open())
+    {
+        while (file)
+            body += file.get();
+    }
+    body[body.length() - 1] = '\0';
+    return body;
+}
 
-// void       response::set_response_file(int code)
-// {
-//     typedef struct data_headers{
-//         std::string content_length;
-//         std::string  content_type;
-//     } data_headers;
-//     typedef struct data_response{
-//         std::string     request_line;
-//         data_headers    headers;
-//         std::string     body;
-//     } data_response;
+void       response::set_response_file(int code)
+{
+    typedef struct data_headers{
+        std::string content_length;
+        std::string  content_type;
+    } data_headers;
+    typedef struct data_response{
+        std::string     request_line;
+        data_headers    headers;
+        std::string     body;
+    } data_response;
 
-//     std::string response;
-//     data_response data;
+    std::string response;
+    data_response data;
     
-//     data.body = get_body(this->conf.root);
-//     data.request_line = "HTTP/1.1 " + std::to_string(code) + " " + this->message_status[code];
-//     data.headers.content_length = std::to_string(data.body.length());
-//     data.headers.content_type = get_content_type(this->conf.root);
+    data.body = get_body(this->root);
+    data.request_line = "HTTP/1.1 " + std::to_string(code) + " " + this->message_status[code];
+    data.headers.content_length = std::to_string(data.body.length());
+    data.headers.content_type = get_content_type(this->root);
     
-//     response+= data.request_line + '\r' + '\n' + 
-//                "Content-Length: " + data.headers.content_length + '\r' + '\n' + "Content-Type: " + data.headers.content_type + 
-//                '\r' + '\n' + '\n' + data.body + '\r' + '\n' + '\r' + '\n';
-//     std::cout << response << std::endl;
-// }
+    response+= data.request_line + '\r' + '\n' + 
+               "Content-Length: " + data.headers.content_length + '\r' + '\n' + "Content-Type: " + data.headers.content_type + 
+               '\r' + '\n' + '\n' + data.body + '\r' + '\n' + '\r' + '\n';
+    std::cout << response << std::endl;
+}
 
-// void    response::set_response_auto_index(int code,std::string body)
-// {
-//     typedef struct data_headers{
-//         std::string content_length;
-//         std::string  content_type;
-//     } data_headers;
-//     typedef struct data_response{
-//         std::string     request_line;
-//         data_headers    headers;
-//         std::string     body;
-//     } data_response;
+void    response::set_response_auto_index(int code,std::string body)
+{
+    typedef struct data_headers{
+        std::string content_length;
+        std::string  content_type;
+    } data_headers;
+    typedef struct data_response{
+        std::string     request_line;
+        data_headers    headers;
+        std::string     body;
+    } data_response;
 
-//     std::string response;
-//     data_response data;
+    std::string response;
+    data_response data;
     
-//     data.body = body;
-//     data.request_line = "HTTP/1.1 " + std::to_string(code) + " " + this->message_status[code];
-//     data.headers.content_length = std::to_string(data.body.length());
-//     data.headers.content_type = "text/html";
+    data.body = body;
+    data.request_line = "HTTP/1.1 " + std::to_string(code) + " " + this->message_status[code];
+    data.headers.content_length = std::to_string(data.body.length());
+    data.headers.content_type = "text/html";
     
-//     response+= data.request_line + '\r' + '\n' + 
-//                "Content-Length: " + data.headers.content_length + '\r' + '\n' + "Content-Type: " + data.headers.content_type + 
-//                '\r' + '\n' + '\n' + data.body + '\r' + '\n' + '\r' + '\n';
-//     std::cout << response << std::endl;
-// }
+    response+= data.request_line + '\r' + '\n' + 
+               "Content-Length: " + data.headers.content_length + '\r' + '\n' + "Content-Type: " + data.headers.content_type + 
+               '\r' + '\n' + '\n' + data.body + '\r' + '\n' + '\r' + '\n';
+    std::cout << response << std::endl;
+}
 
 
 
@@ -205,19 +205,6 @@ bool    response::request_valid(request req,long max_body_size)
     return true;
 }
 
-// LocationData response::fill_location(LocationData server_location,ServerData server)
-// {
-//     server_location._rootPath = server._rootPath;
-//     server_location._autoindex = server._autoindex;
-//     server_location._maxBodySize = server._maxBodySize;
-//     server_location._uploadPath = server._uploadPath;
-//     server_location._index = server._index;
-//     server_location._errorPage = server._errorPage;
-//     server_location._serverNames = server._serverNames;
-//     server_location._redirection = server._redirection;
-//     server_location._allowed_methods = server._allowed_methods;
-//     return server_location;
-// }
 
 LocationData get_location(ServerData server, request &my_request)
 {
@@ -271,152 +258,146 @@ LocationData get_location(ServerData server, request &my_request)
 
 bool        response::check_location_config_file(std::pair<unsigned short,std::string> redirection)
 {
-    if(!is_filled)
+    if(!this->location.pathname.length())
     {
         set_response_error(404);
         return false;
     }
     
-    if(redirection.second.length())
+    // if(redirection.second.length())
+    // {
+    //     set_response_permanently(301,redirection.second);
+    //     return false;
+    // }
+    (void) redirection;
+    return true;
+}
+
+bool response::method_allowed(std::string method)
+{
+    for (size_t i = 0; i < this->location.acceptedMeths.size(); i++)
     {
-        set_response_permanently(301,redirection.second);
+        if(this->location.acceptedMeths[i] == method)
+            return true;
+    }
+    set_response_error(405);
+    return false;
+}
+
+bool    response::resource_root()
+{
+    std::string root = this->location.root;
+    struct stat buff;
+    if(root.length())
+    {
+        if(root[root.length() - 1] == '/')
+            root = root.substr(0, root.size()-1);
+        if(lstat((root + this->req.uri).c_str() ,&buff) == 0)
+        {
+            this->root = root + this->req.uri;
+            return true;
+        }
+    }
+    set_response_error(404);
+    return false;
+}
+
+
+bool    response::is_directory()
+{
+    struct stat buff;
+    lstat(this->root.c_str(),&buff);
+    if(S_ISDIR(buff.st_mode))
+        return true;
+    return false;
+}
+
+bool    response::is_slash_in_end()
+{
+    if(this->req.uri[this->req.uri.length() - 1] != '/')
+    {
+        set_response_permanently(301);
         return false;
     }
     return true;
 }
 
-// bool response::method_allowed(std::string method)
-// {
-//     if(method != "GET" && method != "POST" && method != "DELETE")
-//     {
-//         set_response_error(405);
-// 		return false;
-//     }
-// 	return true;
-// }
-
-// bool    response::resource_root()
-// {
-//     std::string root = this->conf.root;
-//     struct stat buff;
-
-//     if(root.length())
-//     {
-//         if(root[root.length() - 1] == '/')
-//             root = root.substr(0, root.size()-1);
-//         if(lstat((root + this->req.uri).c_str() ,&buff) == 0)
-//         {
-//             this->conf.root = root + this->req.uri;
-//             return true;
-//         }
-//     }
-//     set_response_error(404);
-//     return false;
-// }
-
-// void    response::fill_config(Location location)
-// {
-//     this->conf.root = location._rootPath;
-//     this->conf.index = location._index;
-//     this->conf.autoindex = location._autoindex;
-//     this->conf.error_page = location._errorPage;
-// }
-
-// bool    response::is_directory()
-// {
-//     struct stat buff;
-//     lstat(this->conf.root.c_str(),&buff);
-//     if(S_ISDIR(buff.st_mode))
-//         return true;
-//     return false;
-// }
-
-// bool    response::is_slash_in_end()
-// {
-//     if(this->req.uri[this->req.uri.length() - 1] != '/')
-//     {
-//         set_response_permanently(301);
-//         return false;
-//     }
-//     return true;
-// }
-
-// bool    response::index_files()
-// {
-//     struct stat buff;
-//     std::string temp = this->conf.root;
+bool    response::index_files()
+{
+    struct stat buff;
+    std::string temp = this->root;
     
-//     if(temp[temp.length() - 1] != '/')
-//         temp += "/";
-// 	for (size_t i = 0; i < this->conf.index.size(); i++)
-// 	{
-// 		if(lstat((temp + this->conf.index[i]).c_str() ,&buff) == 0)
-// 		{
-// 			this->conf.root = temp + this->conf.index[i];
-// 			return true;
-// 		}
-// 	}
-//     return false;
-// }
+    if(temp[temp.length() - 1] != '/')
+        temp += "/";
+	for (size_t i = 0; i < this->location.index.size(); i++)
+	{
+		if(lstat((temp + this->location.index[i]).c_str() ,&buff) == 0)
+		{
+			this->root = temp + this->location.index[i];
+			return true;
+		}
+	}
+    return false;
+}
 
-// bool    response::location_has_cgi()
-// {
-//     return false;
-// }
+bool    response::location_has_cgi()
+{
+    return false;
+}
 
-// bool    response::is_auto_index()
-// {
-//     if(!this->conf.autoindex.length() || this->conf.autoindex == "off")
-//     {
-//         set_response_error(403);
-//         return false;
-//     }
-//     return true;
-// }
+bool    response::is_auto_index()
+{
+    if(!this->location.autoindex)
+    {
+        set_response_error(403);
+        return false;
+    }
+    return true;
+}
 
-// std::string response::get_auto_index_directory()
-// {
-// 	std::string body;
-// 	std::vector<std::string> list_files;
-// 	std::string links;
+std::string response::get_auto_index_directory()
+{
+	std::string body;
+	std::vector<std::string> list_files;
+	std::string links;
 
-// 	DIR *d;
-//     struct dirent *dir;
+	DIR *d;
+    struct dirent *dir;
 
-//     d = opendir(this->conf.root.c_str());
-//     if (d)
-//     {
-//         while ((dir = readdir(d)) != NULL)
-//         {
-// 			if(strcmp(dir->d_name,".") != 0 && strcmp(dir->d_name,"..") != 0 && strcmp(dir->d_name,".git") != 0)
-// 			list_files.push_back(dir->d_name);
-//         }
-//         closedir(d);
-//     }
+    d = opendir(this->root.c_str());
+    if (d)
+    {
+        while ((dir = readdir(d)) != NULL)
+        {
+			if(strcmp(dir->d_name,".") != 0 && strcmp(dir->d_name,"..") != 0 && strcmp(dir->d_name,".git") != 0)
+			list_files.push_back(dir->d_name);
+        }
+        closedir(d);
+    }
 
-// 	for (size_t i = 0; i < list_files.size(); i++)
-// 	{
-// 		links+= "    <a href=\"#\">" + list_files[i] + "</a>\n";
-// 	}
+	for (size_t i = 0; i < list_files.size(); i++)
+	{
+		links+= "    <a href=\"#\">" + list_files[i] + "</a>\n";
+	}
 
-// 	body = "<!DOCTYPE html>\n"\
-// "<html lang=\"en\">\n"\
-// "<head>\n"\
-// "    <meta charset=\"UTF-8\">\n"\
-// "    <meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\">\n"\
-// "    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n"\
-// "    <title>Auto Index</title>\n"\
-// "    <style>\n"\
-// "        h1{text-align: center;}\n"\
-// "    </style>\n"\
-// "</head>\n"\
-// "<body>\n"\
-// + links + "\n"\
-// "</body>\n"\
-// "</html>";
+	body = "<!DOCTYPE html>\n"\
+"<html lang=\"en\">\n"\
+"<head>\n"\
+"    <meta charset=\"UTF-8\">\n"\
+"    <meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\">\n"\
+"    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n"\
+"    <title>Auto Index</title>\n"\
+"    <style>\n"\
+"        h1{text-align: center;}\n"\
+"    </style>\n"\
+"</head>\n"\
+"<body>\n"\
++ links + "\n"\
+"</body>\n"\
+"</html>";
 
-// return body;
-// }
+return body;
+}
 
 void       response::fill_content_types()
 {
@@ -535,59 +516,55 @@ void       response::fill_content_types()
 
 
 
-// void    response::GET_method(LocationData location)
-// {
-//     this->fill_config(location);
-//     if(resource_root())
-//     {
-//         if(is_directory())
-//         {
-//             if(is_slash_in_end())
-//             {
-//                 if(index_files())
-//                 {
-//                     if(location_has_cgi())
-//                     {
-//                         //cgi function.
-//                     }
-//                     else
-//                         set_response_file(200);
-//                 }
-//                 else
-//                 {
-//                     if(is_auto_index())
-//                         set_response_auto_index(200,get_auto_index_directory());
-//                 }
-//             }
-//         }
-//         else
-//         {
-//             if(location_has_cgi())
-//             {
-//                 //cgi function.
-//             }
-//             else
-//                 set_response_file(200);
-//         }
-//     }
-// }
+void    response::GET_method()
+{
+    if(resource_root())
+    {
+        if(is_directory())
+        {
+            if(is_slash_in_end())
+            {
+                if(index_files())
+                {
+                    if(location_has_cgi())
+                    {
+                        //cgi function.
+                    }
+                    else
+                        set_response_file(200);
+                }
+                else
+                {
+                    if(is_auto_index())
+                        set_response_auto_index(200,get_auto_index_directory());
+                }
+            }
+        }
+        else
+        {
+            if(location_has_cgi())
+            {
+                //cgi function.
+            }
+            else
+                set_response_file(200);
+        }
+    }
+}
 
 
 void    handle_response(ServerData server, request my_request)
 {
     response res(get_location(server, my_request),my_request);
-    
     if(res.request_valid(res.req, server.limitSize))
     {
         if(res.check_location_config_file(res.location.redirect))
         {
-    //         if(res.method_allowed(res.req.method))
-    //         {
-    //             if(res.req.method == "GET")
-    //             {
-    //                 res.GET_method(res.conf.location);
-    //             }
-    //         }
+            // if(res.method_allowed(res.req.method))
+            // {
+                if(res.req.method == "GET")
+                    res.GET_method();
+            // }
         }
     }
 }

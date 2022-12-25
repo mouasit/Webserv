@@ -6,7 +6,7 @@ int main(int argc, char **argv)
 
     my_request.method = "GET";
     my_request.host = "127.0.0.1";
-    my_request.uri = "/test/";
+    my_request.uri = "/index.html";
     my_request.body = "";
     
     std::vector<ServerData>	cData;
