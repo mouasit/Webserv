@@ -341,8 +341,26 @@ bool    response::index_files()
     return false;
 }
 
+bool response::post_index_files()
+{
+    if(index_files())
+        return true;
+    set_response_error(403);
+    return false;
+}
+
 bool    response::location_has_cgi()
 {
+    return false;
+}
+
+bool    response::post_location_has_cgi()
+{
+    if(location_has_cgi())
+    {
+        return true;
+    }
+    set_response_error(403);
     return false;
 }
 
@@ -515,6 +533,10 @@ void       response::fill_content_types()
 	this->content_types["avi"] = "video/x-msvideo";
 }
 
+bool    response::support_upload()
+{
+    return false;
+}
 
 
 void    response::GET_method()
@@ -553,6 +575,44 @@ void    response::GET_method()
     }
 }
 
+void    response::POST_method()
+{
+    /* 
+        --------------- TODO ---------------
+        - check_support_upload. 
+    */
+    if(support_upload())
+    {
+
+    }
+    else
+    {
+        if(resource_root())
+        {
+            if(is_directory())
+            {
+                if(is_slash_in_end())
+                {
+                    if(post_index_files())
+                    {
+                        if(post_location_has_cgi())
+                        {
+                            //cgi function.
+                        }
+                    }
+                }
+            }
+            else
+            {
+                if(post_location_has_cgi())
+                {
+                    //cgi function.
+                }
+            }
+        }
+    }
+}
+
 
 void    handle_response(ServerData server, request my_request)
 {
@@ -565,6 +625,8 @@ void    handle_response(ServerData server, request my_request)
             {
                 if(res.req.method == "GET")
                     res.GET_method();
+                if(res.req.method == "POST")
+                    res.POST_method();
             }
         }
     }

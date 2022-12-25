@@ -17,8 +17,12 @@ class response{
         bool        is_directory();
         bool        is_slash_in_end();
         bool        index_files();
+        bool        post_index_files();
         bool        location_has_cgi();
+        bool        post_location_has_cgi();
         bool        is_auto_index();
+        bool        support_upload();
+
         void        fill_content_types();
         std::string get_auto_index_directory();
         std::string get_body_res_page(int code);
@@ -55,6 +59,7 @@ class response{
         bool        method_allowed(std::string method);
         bool        resource_root();
         void        GET_method();
+        void        POST_method();
 
         void        set_response_error(int code);
         void        set_response_permanently(int code,std::string redirection);
