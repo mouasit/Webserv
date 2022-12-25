@@ -9,22 +9,12 @@
 #include <vector>
 #include <cstring>
 #include <string.h>
-#include "./config_file/parser.hpp"
+#include "./parseConfigFile/parseConfigFile.hpp"
 #include "./helpers.hpp"
 
 class response{
     private:
-        typedef struct config_file{
-            Vserver  server;
-            Location location;
-            std::string root;
-            std::string autoindex;
-	        std::vector<std::string> index;
-	        std::pair<std::string, std::string> redirection;
-        }config_file;
-        
-        Location    get_location(Vserver server);
-        void        fill_config(Location location);
+        void        fill_config(LocationData location);
         bool        is_directory();
         bool        is_slash_in_end();
         bool        index_files();
@@ -35,16 +25,11 @@ class response{
         std::string get_body_res_page(int code);
         std::string get_body(std::string path_file);
         std::string get_content_type(std::string path_file);
-        Location fill_location(Location server_location,Vserver server);
+        LocationData fill_location(LocationData server_location,ServerData server);
     public:
-        response(Vserver server, request my_request){
-            
+        response(const LocationData &location, request my_request):location(location){
             // fill request.
             this->req = my_request;
-
-            // fill locations.
-            this->conf.location = get_location(server);
-            this->conf.server = server;
 
             // fill errors.
             message_status.insert(std::make_pair(400,"Bad Request"));
@@ -59,20 +44,18 @@ class response{
             //fill content_types.
             fill_content_types();
         };
-        
-        response(){};
         ~response(){};
 
         request                   req;
-        config_file               conf;
         std::map<int,std::string> message_status;
         std::map<std::string,std::string> content_types;
+        const LocationData          &location;
 
-        bool        request_valid(request req, std::string max_body_size);
-        bool        check_location_config_file(bool is_filled, std::pair<std::string,std::string> redirection);
+        bool        request_valid(request req, long max_body_size);
+        bool        check_location_config_file(std::pair<unsigned short,std::string> redirection);
         bool        method_allowed(std::string method);
         bool        resource_root();
-        void        GET_method(Location location);
+        void        GET_method(LocationData location);
 
         void        set_response_error(int code);
         void        set_response_permanently(int code,std::string redirection);
@@ -80,7 +63,8 @@ class response{
         void        set_response_auto_index(int code,std::string body);
 };
 
-void    handle_response(Vserver server, request my_request);
 
+LocationData    get_location(ServerData server, request &my_request);
+void            handle_response(ServerData server, request my_request);
 
 #endif

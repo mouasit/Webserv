@@ -1,7 +1,13 @@
 NAME = response
 
-SRC =  main.cpp response.cpp ./config_file/parser.cpp
-HEADERS = response.hpp ./config_file/parser.hpp
+SRC =	main.cpp response.cpp\
+		./parseConfigFile/Parser.cpp ./parseConfigFile/Lexer.cpp ./parseConfigFile/Token.cpp \
+	   	./parseConfigFile/ServerData.cpp ./parseConfigFile/parseConfigFile.cpp
+
+HEADERS = response.hpp\
+		./parseConfigFile/Parser.hpp ./parseConfigFile/Lexer.hpp ./parseConfigFile/Token.hpp \
+		./parseConfigFile/Exceptions.hpp ./parseConfigFile/ServerData.hpp \
+		./parseConfigFile/parseConfigFile.hpp
 
 all : $(NAME)
 
