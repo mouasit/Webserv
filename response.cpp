@@ -49,7 +49,54 @@ std::string response::get_body_res_page(int code)
 	return body;
 }
 
-void response::set_response_error(int code)
+std::string response::get_body_post(int code)
+{
+    std::string body = "<!DOCTYPE html>\n"\
+"<html lang=\"en\">\n"\
+"<head>\n"\
+"    <meta charset=\"UTF-8\">\n"\
+"    <meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\">\n"\
+"    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n"\
+"    <title>" + std::to_string(code) + " " + this->message_status[code] + "</title>\n"\
+"    <style>\n"\
+"        h1{text-align: center;}\n"\
+"    </style>\n"\
+"</head>\n"\
+"<body>\n"\
+"    <h1>" + std::to_string(code) + " " + this->message_status[code] +"</h1>\n"\
+"    <hr>\n"\
+"</body>\n"\
+"</html>";
+	return body;
+}
+
+void    response::set_response_post(int code)
+{
+    typedef struct data_headers{
+        std::string content_length;
+        std::string  content_type;
+    } data_headers;
+    typedef struct data_response{
+        std::string     request_line;
+        data_headers    headers;
+        std::string     body;
+    } data_response;
+
+    std::string response;
+    data_response data;
+
+    data.body = get_body_post(code);
+    data.request_line = "HTTP/1.1 " + std::to_string(code) + " " + this->message_status[code];
+    data.headers.content_length = std::to_string(data.body.length());
+    data.headers.content_type = "text/html";
+    
+    response+= data.request_line + '\r' + '\n' + 
+               "Content-Length: " + data.headers.content_length + '\r' + '\n' + "Content-Type: " + data.headers.content_type + 
+               '\r' + '\n' + '\n' + data.body + '\r' + '\n' + '\r' + '\n';
+    std::cout << response << std::endl;
+}
+
+void    response::set_response_error(int code)
 {
     typedef struct data_headers{
         std::string content_length;
@@ -531,6 +578,22 @@ void       response::fill_content_types()
 
 bool    response::support_upload()
 {
+    std::string upload_path = "./upload";
+    std::string file_name   = "/Users/mouassit/Desktop/Webserv/index.php";
+    struct stat buff;
+
+    if(upload_path.length())
+    {
+        if(lstat(upload_path.c_str(),&buff) == 0 && S_ISDIR(buff.st_mode))
+        {
+            std::string cmd = "mv " + file_name + " " + upload_path;
+            system(cmd.c_str());
+            set_response_post(201);
+            return true;
+        }
+        else
+            set_response_error(403);
+        }
     return false;
 }
 
@@ -577,11 +640,7 @@ void    response::POST_method()
         --------------- TODO ---------------
         - check_support_upload. 
     */
-    if(support_upload())
-    {
-
-    }
-    else
+    if(!support_upload())
     {
         if(resource_root())
         {
