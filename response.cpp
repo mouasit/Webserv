@@ -622,6 +622,14 @@ void    response::delete_folder()
     return ;
 }
 
+void    response::delete_file()
+{
+    std::string cmd = "rm -rf " + this->root;
+    system(cmd.c_str());
+    set_response_page(204);
+    return ;
+}
+
 
 void    response::GET_method()
 {
@@ -714,7 +722,12 @@ void    response::DELETE_method()
         }
         else
         {
-
+            if(location_has_cgi())
+            {
+                //cgi function.
+            }
+            else
+                delete_file();
         }
     }
 }

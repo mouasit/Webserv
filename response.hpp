@@ -27,6 +27,7 @@ class response{
         bool        is_slash_in_end_delete();
 
         void        delete_folder();
+        void        delete_file();
         void        fill_content_types();
         std::string get_auto_index_directory();
         std::string get_body_res_page(int code);
