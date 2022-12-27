@@ -70,7 +70,7 @@ std::string response::get_body_post(int code)
 	return body;
 }
 
-void    response::set_response_post(int code)
+void    response::set_response_page(int code)
 {
     typedef struct data_headers{
         std::string content_length;
@@ -228,7 +228,6 @@ void    response::set_response_auto_index(int code,std::string body)
 }
 
 
-
 bool    response::request_valid(request req,long max_body_size)
 {
     if(req.uri.find_first_not_of("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~:/?#[]@!$&'()*+,;=%") != std::string::npos)
@@ -366,7 +365,17 @@ bool    response::is_slash_in_end()
     return true;
 }
 
-bool    response::index_files()
+bool    response::is_slash_in_end_delete()
+{
+    if(this->req.uri[this->req.uri.length() - 1] != '/')
+    {
+        set_response_page(409);
+        return false;
+    }
+    return true;
+}
+
+bool    response::get_index_files()
 {
     struct stat buff;
     std::string temp = this->root;
@@ -384,9 +393,9 @@ bool    response::index_files()
     return false;
 }
 
-bool response::post_index_files()
+bool response::index_files()
 {
-    if(index_files())
+    if(get_index_files())
         return true;
     set_response_error(403);
     return false;
@@ -588,13 +597,29 @@ bool    response::support_upload()
         {
             std::string cmd = "mv " + file_name + " " + upload_path;
             system(cmd.c_str());
-            set_response_post(201);
+            set_response_page(201);
             return true;
         }
         else
             set_response_error(403);
         }
     return false;
+}
+
+void    response::delete_folder()
+{
+    std::string cmd = "rm -rf " + this->root;
+    if(access(this->root.c_str(),R_OK) == 0)
+    {
+        system(cmd.c_str());
+        if(access(this->root.c_str(),F_OK) == 0)
+            set_response_page(500);
+        else
+            set_response_page(204);
+    }
+    else
+        set_response_page(403);
+    return ;
 }
 
 
@@ -606,7 +631,7 @@ void    response::GET_method()
         {
             if(is_slash_in_end())
             {
-                if(index_files())
+                if(get_index_files())
                 {
                     if(location_has_cgi())
                     {
@@ -648,7 +673,7 @@ void    response::POST_method()
             {
                 if(is_slash_in_end())
                 {
-                    if(post_index_files())
+                    if(index_files())
                     {
                         if(post_location_has_cgi())
                         {
@@ -668,6 +693,32 @@ void    response::POST_method()
     }
 }
 
+void    response::DELETE_method()
+{
+    if(resource_root())
+    {
+        if(is_directory())
+        {
+            if(is_slash_in_end_delete())
+            {
+                if(location_has_cgi())
+                {
+                    if(index_files())
+                    {
+                        //cgi function.
+                    }
+                }
+                else
+                    delete_folder();
+            }
+        }
+        else
+        {
+
+        }
+    }
+}
+
 
 void    handle_response(ServerData server, request my_request)
 {
@@ -682,6 +733,8 @@ void    handle_response(ServerData server, request my_request)
                     res.GET_method();
                 if(res.req.method == "POST")
                     res.POST_method();
+                if(res.req.method == "DELETE")
+                    res.DELETE_method();
             }
         }
     }

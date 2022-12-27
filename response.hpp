@@ -11,18 +11,22 @@
 #include <string.h>
 #include "./parseConfigFile/parseConfigFile.hpp"
 #include "./helpers.hpp"
+#include <errno.h>
+#include <unistd.h>
 
 class response{
     private:
         bool        is_directory();
         bool        is_slash_in_end();
         bool        index_files();
-        bool        post_index_files();
+        bool        get_index_files();
         bool        location_has_cgi();
         bool        post_location_has_cgi();
         bool        is_auto_index();
         bool        support_upload();
+        bool        is_slash_in_end_delete();
 
+        void        delete_folder();
         void        fill_content_types();
         std::string get_auto_index_directory();
         std::string get_body_res_page(int code);
@@ -42,8 +46,11 @@ class response{
             message_status.insert(std::make_pair(301,"Moved Permanently"));
             message_status.insert(std::make_pair(405,"Method Not Allowed"));
             message_status.insert(std::make_pair(403,"Forbidden"));
+            message_status.insert(std::make_pair(409,"Conflict"));
+            message_status.insert(std::make_pair(500,"Internal Server Error"));
             message_status.insert(std::make_pair(200,"OK"));
             message_status.insert(std::make_pair(201,"Created"));
+            message_status.insert(std::make_pair(204,"No Content"));
 
             //fill content_types.
             fill_content_types();
@@ -62,12 +69,13 @@ class response{
         bool        resource_root();
         void        GET_method();
         void        POST_method();
+        void        DELETE_method();
 
         void        set_response_error(int code);
         void        set_response_permanently(int code,std::string redirection);
         void        set_response_file(int code);
         void        set_response_auto_index(int code,std::string body);
-        void        set_response_post(int code);
+        void        set_response_page(int code);
 };
 
 
